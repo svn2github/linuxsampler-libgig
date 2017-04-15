@@ -321,16 +321,16 @@ static bool convertFileToStereo(const string path, bool keep, bool forceReplace,
                     OPTIONAL_SKIP_CHECK();
                 }
                 if (pSampleL->LoopStart != pSampleR->LoopStart) {
-                    cerr << "WARNING: Sample pair ['" << pSampleL->pInfo->Name << "', '" << pSampleR->pInfo->Name << "'] with different loop start! Skipping!\n";
-                    continue; // skip to convert this sample pair
+                    cerr << "WARNING: Sample pair ['" << pSampleL->pInfo->Name << "', '" << pSampleR->pInfo->Name << "'] with different loop start!";
+                    OPTIONAL_SKIP_CHECK();
                 }
                 if (pSampleL->LoopEnd != pSampleR->LoopEnd) {
-                    cerr << "WARNING: Sample pair ['" << pSampleL->pInfo->Name << "', '" << pSampleR->pInfo->Name << "'] with different loop end! Skipping!\n";
-                    continue; // skip to convert this sample pair
+                    cerr << "WARNING: Sample pair ['" << pSampleL->pInfo->Name << "', '" << pSampleR->pInfo->Name << "'] with different loop end!";
+                    OPTIONAL_SKIP_CHECK();
                 }
                 if (pSampleL->LoopSize != pSampleR->LoopSize) {
-                    cerr << "WARNING: Sample pair ['" << pSampleL->pInfo->Name << "', '" << pSampleR->pInfo->Name << "'] with different loop size! Skipping!\n";
-                    continue; // skip to convert this sample pair
+                    cerr << "WARNING: Sample pair ['" << pSampleL->pInfo->Name << "', '" << pSampleR->pInfo->Name << "'] with different loop size!";
+                    OPTIONAL_SKIP_CHECK();
                 }
                 if (pSampleL->LoopPlayCount != pSampleR->LoopPlayCount) {
                     cerr << "WARNING: Sample pair ['" << pSampleL->pInfo->Name << "', '" << pSampleR->pInfo->Name << "'] with different loop play count!";

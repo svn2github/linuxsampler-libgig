@@ -23,6 +23,7 @@ Version SVN trunk
     - Added new method Sample::GetWaveDataCRC32Checksum().
     - Changed default value of EG2Release (filter release time) to 60s.
     - Instruments' default pitch bend range is now +-2 semi tones.
+    - Fixed CRC checksums being wrong sometimes.
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files
@@ -61,6 +62,10 @@ Version SVN trunk
   * src/tools/gigextract.cpp:
     - Fix: if sample name contains a path separator (slash or backslash) then
       replace them by a minus sign to avoid file system issues.
+
+  * src/tools/gig2stereo.cpp:
+    - Also merge mono sample pairs with non matching loop information if
+      argument --incompatible was given.
 
   * packaging changes:
     - Automake: set environment variable GCC_COLORS=auto to allow GCC to

@@ -269,7 +269,7 @@ namespace {
      * steps.
      *
      * Once the whole data was processed by __calculateCRC(), one should
-     * call __encodeCRC() to get the final CRC result.
+     * call __finalizeCRC() to get the final CRC result.
      *
      * @param buf     - pointer to data the CRC shall be calculated of
      * @param bufSize - size of the data to be processed
@@ -286,8 +286,8 @@ namespace {
      *
      * @param crc - variable previously passed to __calculateCRC()
      */
-    inline static uint32_t __encodeCRC(const uint32_t& crc) {
-        return crc ^ 0xffffffff;
+    inline static void __finalizeCRC(uint32_t& crc) {
+        crc ^= 0xffffffff;
     }
 
 
@@ -1294,8 +1294,9 @@ namespace {
         // if this is the last write, update the checksum chunk in the
         // file
         if (pCkData->GetPos() == pCkData->GetSize()) {
+            __finalizeCRC(crc);
             File* pFile = static_cast<File*>(GetParent());
-            pFile->SetSampleChecksum(this, __encodeCRC(crc));
+            pFile->SetSampleChecksum(this, crc);
         }
         return res;
     }
@@ -1416,7 +1417,7 @@ namespace {
             if (nRead <= 0) break;
             __calculateCRC(&buffer[0], nRead * FrameSize, crc);
         }
-        __encodeCRC(crc);
+        __finalizeCRC(crc);
         return crc;
     }
 
@@ -4246,7 +4247,7 @@ namespace {
         // recalculate CRC32 check sum
         __resetCRC(crc);
         __calculateCRC(&data[0], data.size(), crc);
-        __encodeCRC(crc);
+        __finalizeCRC(crc);
         // make sure chunk exists and has the required size
         const file_offset_t chunkSize = (file_offset_t) 7*sizeof(int32_t) + Name.size() + data.size();
         if (!pChunk) pChunk = pGroup->pList->AddSubChunk(CHUNK_ID_SCRI, chunkSize);
