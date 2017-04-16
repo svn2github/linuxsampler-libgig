@@ -24,6 +24,8 @@ Version SVN trunk
     - Changed default value of EG2Release (filter release time) to 60s.
     - Instruments' default pitch bend range is now +-2 semi tones.
     - Fixed CRC checksums being wrong sometimes.
+    - Fix: method File::AddContentOf() did not clone script groups and scripts
+      of passed original file.
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files

@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2016 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
@@ -4298,6 +4298,22 @@ namespace {
         return pGroup;
     }
 
+    /**
+     * Make a (semi) deep copy of the Script object given by @a orig
+     * and assign it to this object. Note: the ScriptGroup this Script
+     * object belongs to remains untouched by this call.
+     *
+     * @param orig - original Script object to be copied from
+     */
+    void Script::CopyAssign(const Script* orig) {
+        Name        = orig->Name;
+        Compression = orig->Compression;
+        Encoding    = orig->Encoding;
+        Language    = orig->Language;
+        Bypass      = orig->Bypass;
+        data        = orig->data;
+    }
+
     void Script::RemoveAllScriptReferences() {
         File* pFile = pGroup->pFile;
         for (int i = 0; pFile->GetInstrument(i); ++i) {
@@ -5613,7 +5629,19 @@ namespace {
             mGroups[pFile->GetSample(i)->GetGroup()]->AddSample(s);
             mSamples[pFile->GetSample(i)] = s;
         }
-        
+
+        // clone script groups and their scripts
+        for (int iGroup = 0; pFile->GetScriptGroup(iGroup); ++iGroup) {
+            ScriptGroup* sg = pFile->GetScriptGroup(iGroup);
+            ScriptGroup* dg = AddScriptGroup();
+            dg->Name = "COPY" + ToString(iCallCount) + "_" + sg->Name;
+            for (int iScript = 0; sg->GetScript(iScript); ++iScript) {
+                Script* ss = sg->GetScript(iScript);
+                Script* ds = dg->AddScript();
+                ds->CopyAssign(ss);
+            }
+        }
+
         //BUG: For some reason this method only works with this additional
         //     Save() call in between here.
         //
