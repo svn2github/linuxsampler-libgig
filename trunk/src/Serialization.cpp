@@ -557,7 +557,7 @@ namespace Serialization {
         return chain;
     }
 
-    Member _popMemberBlob(const char*& p, const char* end) {
+    static Member _popMemberBlob(const char*& p, const char* end) {
         _Blob blob = _decodeBlob(p, end, false);
         p   = blob.p;
         end = blob.end;
@@ -571,7 +571,7 @@ namespace Serialization {
         m.m_type   = _popDataTypeBlob(p, end);
         assert(m.type());
         assert(!m.name().empty());
-        assert(m.uid() != NULL);
+        assert(m.uid().isValid());
         return m;
     }
 
@@ -591,7 +591,7 @@ namespace Serialization {
         return members;
     }
 
-    void _popPrimitiveValue(const char*& p, const char* end, Object& obj) {
+    static void _popPrimitiveValue(const char*& p, const char* end, Object& obj) {
         const DataType& type = obj.type();
         if (type.isPrimitive() && !type.isPointer()) {
             obj.m_data.resize(type.size());
@@ -640,7 +640,7 @@ namespace Serialization {
         }
     }
 
-    Object _popObjectBlob(const char*& p, const char* end) {
+    static Object _popObjectBlob(const char*& p, const char* end) {
         _Blob blob = _decodeBlob(p, end, false);
         p   = blob.p;
         end = blob.end;

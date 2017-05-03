@@ -80,7 +80,12 @@
  */
 namespace Serialization {
 
+    // just symbol prototyping
+    class DataType;
+    class Object;
+    class Member;
     class Archive;
+    class ObjectPool;
     class Exception;
 
     typedef std::string String;
@@ -171,6 +176,12 @@ namespace Serialization {
     extern const UID NO_UID;
 
     typedef std::vector<UID> UIDChain;
+
+    // prototyping of private internal friend functions
+    static DataType _popDataTypeBlob(const char*& p, const char* end);
+    static Member _popMemberBlob(const char*& p, const char* end);
+    static Object _popObjectBlob(const char*& p, const char* end);
+    static void _popPrimitiveValue(const char*& p, const char* end, Object& obj);
 
     /** @brief Abstract reflection of a native C++ data type.
      *
