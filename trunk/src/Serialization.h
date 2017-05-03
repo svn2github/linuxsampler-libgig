@@ -382,12 +382,12 @@ namespace Serialization {
      * @code
      * Archive a;
      * a.serialize(&myRootObject);
-     * @encode
+     * @endcode
      * Or if you prefer the look of operator based code:
      * @code
      * Archive a;
      * a << myRootObject;
-     * @encode
+     * @endcode
      * The Archive object will then serialize all members of the passed C++
      * object, and will recursively serialize all other C++ objects which it
      * contains or points to. So the root object is the starting point for the
@@ -402,12 +402,12 @@ namespace Serialization {
      * @code
      * Archive a(rawDataStream);
      * a.deserialize(&myRootObject);
-     * @encode
+     * @endcode
      * Or with operator instead:
      * @code
      * Archive a(rawDataStream);
      * a >> myRootObject;
-     * @encode
+     * @endcode
      * Now this framework automatically handles serialization and
      * deserialization of fundamental data types automatically for you (like
      * i.e. char, int, long int, float, double, etc.). However for your own
