@@ -24,6 +24,7 @@
 #include "gig.h"
 
 #include "helper.h"
+#include "Serialization.h"
 
 #include <algorithm>
 #include <math.h>

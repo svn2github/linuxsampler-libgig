@@ -25,7 +25,6 @@
 #define __GIG_H__
 
 #include "DLS.h"
-#include "Serialization.h"
 #include <vector>
 
 #if WORDS_BIGENDIAN
@@ -65,6 +64,9 @@
 # define CHUNK_ID_LSNM  0x4d4e534c // own gig format extension
 # define CHUNK_ID_SCSL  0x4c534353 // own gig format extension
 #endif // WORDS_BIGENDIAN
+
+// just symbol prototyping (since Serialization.h not included by default here)
+namespace Serialization { class Archive; }
 
 /** Gigasampler/GigaStudio specific classes and definitions */
 namespace gig {
