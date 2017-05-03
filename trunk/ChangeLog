@@ -4,6 +4,9 @@ Version SVN trunk
     - using now native integer size where appropriate
     - fixed minor issues with man pages (patch by Debian maintainer)
     - fixed various spelling mistakes (patch by Debian maintainer)
+    - Added new "Serialization" framework (and equally named namespace)
+      which allows to serialize and deserialize native C++ objects
+      in a portable, easy and flexible way.
 
   * src/gig.cpp, src/gig.h:
     - fixed bug in Script::SetGroup: the script chunk wasn't moved
@@ -26,6 +29,8 @@ Version SVN trunk
     - Fixed CRC checksums being wrong sometimes.
     - Fix: method File::AddContentOf() did not clone script groups and scripts
       of passed original file.
+    - Added support for serializing & deserializing DimensionRegion
+      objects (and crossfade_t and leverage_ctrl_t objects).
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files

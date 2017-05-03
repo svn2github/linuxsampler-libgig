@@ -55,6 +55,9 @@
 #define GIG_EG_CTR_DECAY_INFLUENCE_ENCODE(x)    ((x & 0x03) << 3)
 #define GIG_EG_CTR_RELEASE_INFLUENCE_ENCODE(x)  ((x & 0x03) << 5)
 
+#define SRLZ(member) \
+    archive->serializeMember(*this, member, #member);
+
 namespace gig {
 
 // *************** Internal functions for sample decompression ***************
@@ -311,6 +314,28 @@ namespace {
     static int __resolveZoneSize(dimension_def_t& dimension_definition) {
         return (dimension_definition.split_type == split_type_normal)
         ? int(128.0 / dimension_definition.zones) : 0;
+    }
+
+
+
+// *************** leverage_ctrl_t ***************
+// *
+
+    void leverage_ctrl_t::serialize(Serialization::Archive* archive) {
+        SRLZ(type);
+        SRLZ(controller_number);
+    }
+
+
+
+// *************** crossfade_t ***************
+// *
+
+    void crossfade_t::serialize(Serialization::Archive* archive) {
+        SRLZ(in_start);
+        SRLZ(in_end);
+        SRLZ(out_start);
+        SRLZ(out_end);
     }
 
 
@@ -1788,6 +1813,90 @@ namespace {
             for (int k = 0 ; k < orig->SampleLoops ; k++)
                 pSampleLoops[k] = orig->pSampleLoops[k];
         }
+    }
+
+    void DimensionRegion::serialize(Serialization::Archive* archive) {
+        SRLZ(VelocityUpperLimit);
+        SRLZ(EG1PreAttack);
+        SRLZ(EG1Attack);
+        SRLZ(EG1Decay1);
+        SRLZ(EG1Decay2);
+        SRLZ(EG1InfiniteSustain);
+        SRLZ(EG1Sustain);
+        SRLZ(EG1Release);
+        SRLZ(EG1Hold);
+        SRLZ(EG1Controller);
+        SRLZ(EG1ControllerInvert);
+        SRLZ(EG1ControllerAttackInfluence);
+        SRLZ(EG1ControllerDecayInfluence);
+        SRLZ(EG1ControllerReleaseInfluence);
+        SRLZ(LFO1Frequency);
+        SRLZ(LFO1InternalDepth);
+        SRLZ(LFO1ControlDepth);
+        SRLZ(LFO1Controller);
+        SRLZ(LFO1FlipPhase);
+        SRLZ(LFO1Sync);
+        SRLZ(EG2PreAttack);
+        SRLZ(EG2Attack);
+        SRLZ(EG2Decay1);
+        SRLZ(EG2Decay2);
+        SRLZ(EG2InfiniteSustain);
+        SRLZ(EG2Sustain);
+        SRLZ(EG2Release);
+        SRLZ(EG2Controller);
+        SRLZ(EG2ControllerInvert);
+        SRLZ(EG2ControllerAttackInfluence);
+        SRLZ(EG2ControllerDecayInfluence);
+        SRLZ(EG2ControllerReleaseInfluence);
+        SRLZ(LFO2Frequency);
+        SRLZ(LFO2InternalDepth);
+        SRLZ(LFO2ControlDepth);
+        SRLZ(LFO2Controller);
+        SRLZ(LFO2FlipPhase);
+        SRLZ(LFO2Sync);
+        SRLZ(EG3Attack);
+        SRLZ(EG3Depth);
+        SRLZ(LFO3Frequency);
+        SRLZ(LFO3InternalDepth);
+        SRLZ(LFO3ControlDepth);
+        SRLZ(LFO3Controller);
+        SRLZ(LFO3Sync);
+        SRLZ(VCFEnabled);
+        SRLZ(VCFType);
+        SRLZ(VCFCutoffController);
+        SRLZ(VCFCutoffControllerInvert);
+        SRLZ(VCFCutoff);
+        SRLZ(VCFVelocityCurve);
+        SRLZ(VCFVelocityScale);
+        SRLZ(VCFVelocityDynamicRange);
+        SRLZ(VCFResonance);
+        SRLZ(VCFResonanceDynamic);
+        SRLZ(VCFResonanceController);
+        SRLZ(VCFKeyboardTracking);
+        SRLZ(VCFKeyboardTrackingBreakpoint);
+        SRLZ(VelocityResponseCurve);
+        SRLZ(VelocityResponseDepth);
+        SRLZ(VelocityResponseCurveScaling);
+        SRLZ(ReleaseVelocityResponseCurve);
+        SRLZ(ReleaseVelocityResponseDepth);
+        SRLZ(ReleaseTriggerDecay);
+        SRLZ(Crossfade);
+        SRLZ(PitchTrack);
+        SRLZ(DimensionBypass);
+        SRLZ(Pan);
+        SRLZ(SelfMask);
+        SRLZ(AttenuationController);
+        SRLZ(InvertAttenuationController);
+        SRLZ(AttenuationControllerThreshold);
+        SRLZ(ChannelOffset);
+        SRLZ(SustainDefeat);
+        SRLZ(MSDecode);
+        //SRLZ(SampleStartOffset);
+        SRLZ(SampleAttenuation);
+
+        // derived attributes from DLS::Sampler
+        SRLZ(FineTune);
+        SRLZ(Gain);
     }
 
     /**

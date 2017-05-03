@@ -4,8 +4,8 @@ AM_CXXFLAGS = -pedantic -Wreturn-type
 pkglib_LTLIBRARIES = libgig.la libakai.la
 
 libgigincludedir = $(includedir)/libgig
-libgiginclude_HEADERS = RIFF.h DLS.h SF.h gig.h Korg.h
-libgig_la_SOURCES = RIFF.cpp DLS.cpp SF.cpp gig.cpp Korg.cpp
+libgiginclude_HEADERS = RIFF.h DLS.h SF.h gig.h Korg.h Serialization.h
+libgig_la_SOURCES = RIFF.cpp DLS.cpp SF.cpp gig.cpp Korg.cpp Serialization.cpp
 libgig_la_LDFLAGS = -no-undefined -version-info @LIBGIG_SHARED_VERSION_INFO@ @LIBGIG_SHLIB_VERSION_ARG@
 if WIN32
 libgig_la_LIBADD = -lrpcrt4

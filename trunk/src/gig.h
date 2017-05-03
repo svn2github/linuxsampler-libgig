@@ -25,6 +25,7 @@
 #define __GIG_H__
 
 #include "DLS.h"
+#include "Serialization.h"
 #include <vector>
 
 #if WORDS_BIGENDIAN
@@ -191,6 +192,8 @@ namespace gig {
 
         type_t type;              ///< Controller type
         uint   controller_number; ///< MIDI controller number if this controller is a control change controller, 0 otherwise
+
+        void serialize(Serialization::Archive* archive);
     };
 
     /**
@@ -304,6 +307,8 @@ namespace gig {
         uint8_t out_start;  ///< Start position of fade out.
         uint8_t out_end;    ///< End postition of fade out.
         #endif // WORDS_BIGENDIAN
+
+        void serialize(Serialization::Archive* archive);
     };
 
     /** Reflects the current playback state for a sample. */
@@ -486,7 +491,9 @@ namespace gig {
             DimensionRegion(RIFF::List* _3ewl, const DimensionRegion& src);
            ~DimensionRegion();
             void CopyAssign(const DimensionRegion* orig, const std::map<Sample*,Sample*>* mSamples);
+            void serialize(Serialization::Archive* archive);
             friend class Region;
+            friend class Serialization::Archive;
         private:
             typedef enum { ///< Used to decode attenuation, EG1 and EG2 controller
                 // official leverage controllers as they were defined in the original Gigasampler/GigaStudio format:
