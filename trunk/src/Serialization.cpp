@@ -26,8 +26,7 @@
 #include <iostream>
 #include <assert.h>
 #include <string.h> // for memcpy()
-#include <stdlib.h> // for atof() and atof_l()
-#include <xlocale.h> // for locale passed to atof_l()
+#include <stdlib.h> // for atof()
 
 #include "helper.h"
 
@@ -487,10 +486,8 @@ namespace Serialization {
         String s(p, size_t(end - p));
 
         T_real r;
-        if (sizeof(T_real) == sizeof(float))
+        if (sizeof(T_real) <= sizeof(double))
             r = atof(s.c_str());
-        else if (sizeof(T_real) == sizeof(double))
-            r = atof_l(s.c_str(), _c_locale);
         else
             assert(false /* unknown real type */);
 
