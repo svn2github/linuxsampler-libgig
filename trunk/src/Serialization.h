@@ -178,10 +178,12 @@ namespace Serialization {
     typedef std::vector<UID> UIDChain;
 
     // prototyping of private internal friend functions
+    static String _encodePrimitiveValue(const Object& obj);
     static DataType _popDataTypeBlob(const char*& p, const char* end);
     static Member _popMemberBlob(const char*& p, const char* end);
     static Object _popObjectBlob(const char*& p, const char* end);
     static void _popPrimitiveValue(const char*& p, const char* end, Object& obj);
+    static String _primitiveObjectValueToString(const Object& obj);
 
     /** @brief Abstract reflection of a native C++ data type.
      *
@@ -286,6 +288,7 @@ namespace Serialization {
         bool m_isPointer;
 
         friend DataType _popDataTypeBlob(const char*& p, const char* end);
+        friend class Archive;
     };
 
     /** @brief Abstract reflection of a native C++ class/struct's member variable.
@@ -378,8 +381,11 @@ namespace Serialization {
         RawData m_data;
         std::vector<Member> m_members;
 
+        friend String _encodePrimitiveValue(const Object& obj);
         friend Object _popObjectBlob(const char*& p, const char* end);
         friend void _popPrimitiveValue(const char*& p, const char* end, Object& obj);
+        friend String _primitiveObjectValueToString(const Object& obj);
+        friend class Archive;
     };
 
     /** @brief Destination container for serialization, and source container for deserialization.
@@ -533,7 +539,7 @@ namespace Serialization {
             deserialize(&obj);
         }
 
-        const RawData& rawData() const { return m_rawData; }
+        const RawData& rawData();
         virtual String rawDataFormat() const;
 
         template<typename T_classType, typename T_memberType>
@@ -567,9 +573,16 @@ namespace Serialization {
         virtual void decode(const RawData& data);
         virtual void decode(const uint8_t* data, size_t size);
         void clear();
+        bool isModified() const;
         void remove(const Object& obj);
         Object& rootObject();
         Object& objectByUID(const UID& uid);
+        void setAutoValue(Object& object, String value);
+        void setIntValue(Object& object, int64_t value);
+        void setRealValue(Object& object, double value);
+        void setBoolValue(Object& object, bool value);
+        void setEnumValue(Object& object, uint64_t value);
+        String valueAsString(const Object& object);
 
     protected:
         // UID resolver for non-pointer types
@@ -676,6 +689,7 @@ namespace Serialization {
         operation_t m_operation;
         UID m_root;
         RawData m_rawData;
+        bool m_isModified;
     };
 
     /**

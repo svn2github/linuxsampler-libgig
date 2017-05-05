@@ -45,6 +45,17 @@ Version SVN trunk
     - when saving a modified, grown RIFF file, the temporary file size during
       Save() operation will no longer be larger than the final grown file size
 
+  * src/Serialization.cpp, src/Serialization.h:
+    - Archive: Added method isModified().
+    - Archive: Added method setAutoValue().
+    - Archive: Added method setIntValue().
+    - Archive: Added method setRealValue().
+    - Archive: Added method setBoolValue().
+    - Archive: Added method setEnumValue().
+    - Archive: Added method valueAsString().
+    - Archive::rawData(): Automatically re-encode new raw data stream if
+      archive had been modified (i.e. by remove(), setAutoValue(), etc.).
+
   * src/tools/akaidump.cpp, src/tools/akaiextract.cpp:
     - improved output of non-ascii characters in usage messages
     - fixed printf format strings

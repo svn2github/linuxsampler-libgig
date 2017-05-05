@@ -190,7 +190,7 @@ namespace Serialization {
         m_uid  = uidChain;
         m_version = 0;
         m_minVersion = 0;
-        m_data.resize(type.size());
+        //m_data.resize(type.size());
     }
 
     bool Object::isValid() const {
@@ -268,17 +268,20 @@ namespace Serialization {
     Archive::Archive() {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
+        m_isModified = false;
     }
 
     Archive::Archive(const RawData& data) {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
+        m_isModified = false;
         decode(m_rawData);
     }
 
     Archive::Archive(const uint8_t* data, size_t size) {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
+        m_isModified = false;
         decode(data, size);
     }
 
@@ -332,50 +335,57 @@ namespace Serialization {
         return _encodeBlob(s);
     }
 
-    static String _encodePrimitiveValue(const Object& obj) {
+    static String _primitiveObjectValueToString(const Object& obj) {
         String s;
         const DataType& type = obj.type();
         const ID& id = obj.uid().id;
+        void* ptr = obj.m_data.empty() ? (void*)id : (void*)&obj.m_data[0];
+        if (!obj.m_data.empty())
+            assert(type.size() == obj.m_data.size());
         if (type.isPrimitive() && !type.isPointer()) {
             if (type.isInteger() || type.isEnum()) {
                 if (type.isSigned()) {
                     if (type.size() == 1)
-                        s = ToString((int16_t)*(int8_t*)id); // int16_t: prevent ToString() to render an ASCII character
+                        s = ToString((int16_t)*(int8_t*)ptr); // int16_t: prevent ToString() to render an ASCII character
                     else if (type.size() == 2)
-                        s = ToString(*(int16_t*)id);
+                        s = ToString(*(int16_t*)ptr);
                     else if (type.size() == 4)
-                        s = ToString(*(int32_t*)id);
+                        s = ToString(*(int32_t*)ptr);
                     else if (type.size() == 8)
-                        s = ToString(*(int64_t*)id);
+                        s = ToString(*(int64_t*)ptr);
                     else
                         assert(false /* unknown signed int type size */);
                 } else {
                     if (type.size() == 1)
-                        s = ToString((uint16_t)*(uint8_t*)id); // uint16_t: prevent ToString() to render an ASCII character
+                        s = ToString((uint16_t)*(uint8_t*)ptr); // uint16_t: prevent ToString() to render an ASCII character
                     else if (type.size() == 2)
-                        s = ToString(*(uint16_t*)id);
+                        s = ToString(*(uint16_t*)ptr);
                     else if (type.size() == 4)
-                        s = ToString(*(uint32_t*)id);
+                        s = ToString(*(uint32_t*)ptr);
                     else if (type.size() == 8)
-                        s = ToString(*(uint64_t*)id);
+                        s = ToString(*(uint64_t*)ptr);
                     else
                         assert(false /* unknown unsigned int type size */);
                 }
             } else if (type.isReal()) {
                 if (type.size() == sizeof(float))
-                    s = ToString(*(float*)id);
+                    s = ToString(*(float*)ptr);
                 else if (type.size() == sizeof(double))
-                    s = ToString(*(double*)id);
+                    s = ToString(*(double*)ptr);
                 else
                     assert(false /* unknown floating point type */);
             } else if (type.isBool()) {
-                s = ToString(*(bool*)id);
+                s = ToString(*(bool*)ptr);
             } else {
                 assert(false /* unknown primitive type */);
             }
 
         }
-        return _encodeBlob(s);
+        return s;
+    }
+
+    static String _encodePrimitiveValue(const Object& obj) {
+        return _encodeBlob( _primitiveObjectValueToString(obj) );
     }
 
     static String _encode(const Object& obj) {
@@ -417,6 +427,7 @@ namespace Serialization {
         s += _encodeRootBlob();
         m_rawData.resize(s.length() + 1);
         memcpy(&m_rawData[0], &s[0], s.length() + 1);
+        m_isModified = false;
     }
 
     struct _Blob {
@@ -697,6 +708,7 @@ namespace Serialization {
     void Archive::decode(const RawData& data) {
         m_rawData = data;
         m_allObjects.clear();
+        m_isModified = false;
         const char* p   = (const char*) &data[0];
         const char* end = p + data.size();
         if (memcmp(p, MAGIC_START, std::min(strlen(MAGIC_START), data.size())))
@@ -712,8 +724,17 @@ namespace Serialization {
         decode(rawData);
     }
 
+    const RawData& Archive::rawData() {
+        if (m_isModified) encode();
+        return m_rawData;
+    }
+
     String Archive::rawDataFormat() const {
         return MAGIC_START;
+    }
+
+    bool Archive::isModified() const {
+        return m_isModified;
     }
 
     void Archive::clear() {
@@ -721,15 +742,156 @@ namespace Serialization {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
         m_rawData.clear();
+        m_isModified = false;
     }
 
     void Archive::remove(const Object& obj) {
         if (!obj.uid()) return;
         m_allObjects.erase(obj.uid());
+        m_isModified = true;
     }
 
     Object& Archive::objectByUID(const UID& uid) {
         return m_allObjects[uid];
+    }
+
+    void Archive::setEnumValue(Object& object, uint64_t value) {
+        if (!object) return;
+        if (!object.type().isEnum())
+            throw Exception("Not an enum data type");
+        Object* pObject = &object;
+        if (object.type().isPointer()) {
+            Object& obj = objectByUID(object.uid(1));
+            if (!obj) return;
+            pObject = &obj;
+        }
+        const int nativeEnumSize = sizeof(enum operation_t);
+        DataType& type = const_cast<DataType&>( pObject->type() );
+        // original serializer ("sender") might have had a different word size
+        // than this machine, adjust type object in this case
+        if (type.size() != nativeEnumSize) {
+            type.m_size = nativeEnumSize;
+        }
+        pObject->m_data.resize(type.size());
+        void* ptr = &pObject->m_data[0];
+        if (type.size() == 1)
+            *(uint8_t*)ptr = (uint8_t)value;
+        else if (type.size() == 2)
+            *(uint16_t*)ptr = (uint16_t)value;
+        else if (type.size() == 4)
+            *(uint32_t*)ptr = (uint32_t)value;
+        else if (type.size() == 8)
+            *(uint64_t*)ptr = (uint64_t)value;
+        else
+            assert(false /* unknown enum type size */);
+        m_isModified = true;
+    }
+
+    void Archive::setIntValue(Object& object, int64_t value) {
+        if (!object) return;
+        if (!object.type().isInteger())
+            throw Exception("Not an integer data type");
+        Object* pObject = &object;
+        if (object.type().isPointer()) {
+            Object& obj = objectByUID(object.uid(1));
+            if (!obj) return;
+            pObject = &obj;
+        }
+        const DataType& type = pObject->type();
+        pObject->m_data.resize(type.size());
+        void* ptr = &pObject->m_data[0];
+        if (type.isSigned()) {
+            if (type.size() == 1)
+                *(int8_t*)ptr = (int8_t)value;
+            else if (type.size() == 2)
+                *(int16_t*)ptr = (int16_t)value;
+            else if (type.size() == 4)
+                *(int32_t*)ptr = (int32_t)value;
+            else if (type.size() == 8)
+                *(int64_t*)ptr = (int64_t)value;
+            else
+                assert(false /* unknown signed int type size */);
+        } else {
+            if (type.size() == 1)
+                *(uint8_t*)ptr = (uint8_t)value;
+            else if (type.size() == 2)
+                *(uint16_t*)ptr = (uint16_t)value;
+            else if (type.size() == 4)
+                *(uint32_t*)ptr = (uint32_t)value;
+            else if (type.size() == 8)
+                *(uint64_t*)ptr = (uint64_t)value;
+            else
+                assert(false /* unknown unsigned int type size */);
+        }
+        m_isModified = true;
+    }
+
+    void Archive::setRealValue(Object& object, double value) {
+        if (!object) return;
+        if (!object.type().isReal())
+            throw Exception("Not a real data type");
+        Object* pObject = &object;
+        if (object.type().isPointer()) {
+            Object& obj = objectByUID(object.uid(1));
+            if (!obj) return;
+            pObject = &obj;
+        }
+        const DataType& type = pObject->type();
+        pObject->m_data.resize(type.size());
+        void* ptr = &pObject->m_data[0];
+        if (type.size() == sizeof(float))
+            *(float*)ptr = (float)value;
+        else if (type.size() == sizeof(double))
+            *(double*)ptr = (double)value;
+        else
+            assert(false /* unknown real type size */);
+        m_isModified = true;
+    }
+
+    void Archive::setBoolValue(Object& object, bool value) {
+        if (!object) return;
+        if (!object.type().isBool())
+            throw Exception("Not a bool data type");
+        Object* pObject = &object;
+        if (object.type().isPointer()) {
+            Object& obj = objectByUID(object.uid(1));
+            if (!obj) return;
+            pObject = &obj;
+        }
+        const DataType& type = pObject->type();
+        pObject->m_data.resize(type.size());
+        bool* ptr = (bool*)&pObject->m_data[0];
+        *ptr = value;
+        m_isModified = true;
+    }
+
+    void Archive::setAutoValue(Object& object, String value) {
+        if (!object) return;
+        const DataType& type = object.type();
+        if (type.isInteger())
+            setIntValue(object, atoll(value.c_str()));
+        else if (type.isReal())
+            setRealValue(object, atof(value.c_str()));
+        else if (type.isBool())
+            setBoolValue(object, atof(value.c_str()));
+        else if (type.isEnum())
+            setEnumValue(object, atoll(value.c_str()));
+        else
+            throw Exception("Not a primitive data type");
+    }
+
+    String Archive::valueAsString(const Object& object) {
+        if (!object)
+            throw Exception("Invalid object");
+        if (object.type().isClass())
+            throw Exception("Object is class type");
+        const Object* pObject = &object;
+        if (object.type().isPointer()) {
+            const Object& obj = objectByUID(object.uid(1));
+            if (!obj) return "";
+            pObject = &obj;
+        }
+        return _primitiveObjectValueToString(*pObject);
     }
 
     // *************** Archive::Syncer ***************
