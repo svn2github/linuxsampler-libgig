@@ -362,7 +362,7 @@ namespace Serialization {
         std::vector<Member>& members() { return m_members; }
         const std::vector<Member>& members() const { return m_members; }
         Member memberNamed(String name) const;
-        void remove(const Member& member);
+        Member memberByUID(const UID& uid) const;
         std::vector<Member> membersOfType(const DataType& type) const;
         int sequenceIndexOf(const Member& member) const;
         bool isValid() const;
@@ -372,6 +372,9 @@ namespace Serialization {
         bool operator!=(const Object& other) const;
         bool operator<(const Object& other) const;
         bool operator>(const Object& other) const;
+
+    protected:
+        void remove(const Member& member);
 
     private:
         DataType m_type;
@@ -574,6 +577,7 @@ namespace Serialization {
         virtual void decode(const uint8_t* data, size_t size);
         void clear();
         bool isModified() const;
+        void removeMember(Object& parent, const Member& member);
         void remove(const Object& obj);
         Object& rootObject();
         Object& objectByUID(const UID& uid);

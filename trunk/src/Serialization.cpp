@@ -236,6 +236,14 @@ namespace Serialization {
         return Member();
     }
 
+    Member Object::memberByUID(const UID& uid) const {
+        if (!uid) return Member();
+        for (int i = 0; i < m_members.size(); ++i)
+            if (m_members[i].uid() == uid)
+                return m_members[i];
+        return Member();
+    }
+
     void Object::remove(const Member& member) {
         for (int i = 0; i < m_members.size(); ++i) {
             if (m_members[i] == member) {
@@ -745,7 +753,13 @@ namespace Serialization {
         m_isModified = false;
     }
 
+    void Archive::removeMember(Object& parent, const Member& member) {
+        parent.remove(member);
+        m_isModified = true;
+    }
+
     void Archive::remove(const Object& obj) {
+        //FIXME: Should traverse from root object and remove all members associated with this object
         if (!obj.uid()) return;
         m_allObjects.erase(obj.uid());
         m_isModified = true;

@@ -55,6 +55,9 @@ Version SVN trunk
     - Archive: Added method valueAsString().
     - Archive::rawData(): Automatically re-encode new raw data stream if
       archive had been modified (i.e. by remove(), setAutoValue(), etc.).
+    - Object: Added method memberByUID().
+    - Object: remove() method is now protected.
+    - Archive: Added method removeMember();
 
   * src/tools/akaidump.cpp, src/tools/akaiextract.cpp:
     - improved output of non-ascii characters in usage messages
