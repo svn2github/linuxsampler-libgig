@@ -34,6 +34,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <time.h>
 
 /** @brief Serialization / deserialization framework.
  *
@@ -100,6 +101,11 @@ namespace Serialization {
         OPERATION_NONE,
         OPERATION_SERIALIZE,
         OPERATION_DESERIALIZE
+    };
+
+    enum time_base_t {
+        LOCAL_TIME,
+        UTC_TIME
     };
 
     template<typename T>
@@ -587,6 +593,14 @@ namespace Serialization {
         void setBoolValue(Object& object, bool value);
         void setEnumValue(Object& object, uint64_t value);
         String valueAsString(const Object& object);
+        String name() const;
+        void setName(String name);
+        String comment() const;
+        void setComment(String comment);
+        time_t timeStampCreated() const;
+        time_t timeStampModified() const;
+        tm dateTimeCreated(time_base_t base = LOCAL_TIME) const;
+        tm dateTimeModified(time_base_t base = LOCAL_TIME) const;
 
     protected:
         // UID resolver for non-pointer types
@@ -694,6 +708,10 @@ namespace Serialization {
         UID m_root;
         RawData m_rawData;
         bool m_isModified;
+        String m_name;
+        String m_comment;
+        time_t m_timeCreated;
+        time_t m_timeModified;
     };
 
     /**

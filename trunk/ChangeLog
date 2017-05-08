@@ -57,7 +57,11 @@ Version SVN trunk
       archive had been modified (i.e. by remove(), setAutoValue(), etc.).
     - Object: Added method memberByUID().
     - Object: remove() method is now protected.
-    - Archive: Added method removeMember();
+    - Archive: Added method removeMember().
+    - Archive: Added methods name() and setName().
+    - Archive: Added methods comment() and setComment().
+    - Archive: Added methods timeStampCreated(), timeStampModified(),
+      dateTimeCreated() and dateTimeModified().
 
   * src/tools/akaidump.cpp, src/tools/akaiextract.cpp:
     - improved output of non-ascii characters in usage messages

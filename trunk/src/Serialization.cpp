@@ -30,6 +30,8 @@
 
 #include "helper.h"
 
+#define LIBGIG_EPOCH_TIME ((time_t)0)
+
 namespace Serialization {
 
     // *************** DataType ***************
@@ -277,12 +279,14 @@ namespace Serialization {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
         m_isModified = false;
+        m_timeCreated = m_timeModified = LIBGIG_EPOCH_TIME;
     }
 
     Archive::Archive(const RawData& data) {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
         m_isModified = false;
+        m_timeCreated = m_timeModified = LIBGIG_EPOCH_TIME;
         decode(m_rawData);
     }
 
@@ -290,6 +294,7 @@ namespace Serialization {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
         m_isModified = false;
+        m_timeCreated = m_timeModified = LIBGIG_EPOCH_TIME;
         decode(data, size);
     }
 
@@ -309,6 +314,10 @@ namespace Serialization {
         s += _encodeBlob(ToString(size_t(uid.id)));
         s += _encodeBlob(ToString(size_t(uid.size)));
         return _encodeBlob(s);
+    }
+
+    static String _encode(const time_t& time) {
+        return _encodeBlob(ToString(time));
     }
 
     static String _encode(const DataType& type) {
@@ -426,6 +435,10 @@ namespace Serialization {
         s += _encodeBlob(ToString(ENCODING_FORMAT_MINOR_VERSION));
         s += _encode(m_root);
         s += _encode(m_allObjects);
+        s += _encodeBlob(m_name);
+        s += _encodeBlob(m_comment);
+        s += _encode(m_timeCreated);
+        s += _encode(m_timeModified);
         return _encodeBlob(s);
     }
 
@@ -436,6 +449,9 @@ namespace Serialization {
         m_rawData.resize(s.length() + 1);
         memcpy(&m_rawData[0], &s[0], s.length() + 1);
         m_isModified = false;
+        m_timeModified = time(NULL);
+        if (m_timeCreated == LIBGIG_EPOCH_TIME)
+            m_timeCreated = m_timeModified;
     }
 
     struct _Blob {
@@ -533,6 +549,11 @@ namespace Serialization {
         memcpy(&s[0], p, sz);
         p += sz;
         return s;
+    }
+
+    static time_t _popTimeBlob(const char*& p, const char* end) {
+        const uint64_t i = _popIntBlob<uint64_t>(p, end);
+        return (time_t) i;
     }
 
     DataType _popDataTypeBlob(const char*& p, const char* end) {
@@ -711,12 +732,18 @@ namespace Serialization {
         _popObjectsBlob(p, end);
         if (!m_allObjects[m_root])
             throw Exception("Decode Error: Missing declared root object");
+
+        m_name = _popStringBlob(p, end);
+        m_comment = _popStringBlob(p, end);
+        m_timeCreated = _popTimeBlob(p, end);
+        m_timeModified = _popTimeBlob(p, end);
     }
 
     void Archive::decode(const RawData& data) {
         m_rawData = data;
         m_allObjects.clear();
         m_isModified = false;
+        m_timeCreated = m_timeModified = LIBGIG_EPOCH_TIME;
         const char* p   = (const char*) &data[0];
         const char* end = p + data.size();
         if (memcmp(p, MAGIC_START, std::min(strlen(MAGIC_START), data.size())))
@@ -751,6 +778,60 @@ namespace Serialization {
         m_root = NO_UID;
         m_rawData.clear();
         m_isModified = false;
+        m_timeCreated = m_timeModified = LIBGIG_EPOCH_TIME;
+    }
+
+    String Archive::name() const {
+        return m_name;
+    }
+
+    void Archive::setName(String name) {
+        if (m_name == name) return;
+        m_name = name;
+        m_isModified = true;
+    }
+
+    String Archive::comment() const {
+        return m_comment;
+    }
+
+    void Archive::setComment(String comment) {
+        if (m_comment == comment) return;
+        m_comment = comment;
+        m_isModified = true;
+    }
+
+    static tm _convertTimeStamp(const time_t& time, time_base_t base) {
+        tm* pTm;
+        switch (base) {
+            case LOCAL_TIME:
+                pTm = localtime(&time);
+                break;
+            case UTC_TIME:
+                pTm = gmtime(&time);
+                break;
+            default:
+                throw Exception("Time stamp with unknown time base (" + ToString((int64_t)base) + ") requested");
+        }
+        if (!pTm)
+            throw Exception("Failed assembling time stamp structure");
+        return *pTm;
+    }
+
+    time_t Archive::timeStampCreated() const {
+        return m_timeCreated;
+    }
+
+    time_t Archive::timeStampModified() const {
+        return m_timeModified;
+    }
+
+    tm Archive::dateTimeCreated(time_base_t base) const {
+        return _convertTimeStamp(m_timeCreated, base);
+    }
+
+    tm Archive::dateTimeModified(time_base_t base) const {
+        return _convertTimeStamp(m_timeModified, base);
     }
 
     void Archive::removeMember(Object& parent, const Member& member) {
