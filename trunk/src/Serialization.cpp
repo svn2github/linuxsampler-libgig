@@ -445,13 +445,13 @@ namespace Serialization {
     void Archive::encode() {
         m_rawData.clear();
         String s = MAGIC_START;
+        m_timeModified = time(NULL);
+        if (m_timeCreated == LIBGIG_EPOCH_TIME)
+            m_timeCreated = m_timeModified;
         s += _encodeRootBlob();
         m_rawData.resize(s.length() + 1);
         memcpy(&m_rawData[0], &s[0], s.length() + 1);
         m_isModified = false;
-        m_timeModified = time(NULL);
-        if (m_timeCreated == LIBGIG_EPOCH_TIME)
-            m_timeCreated = m_timeModified;
     }
 
     struct _Blob {
