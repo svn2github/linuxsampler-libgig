@@ -123,7 +123,7 @@ namespace Serialization {
     template<typename T>
     bool IsUnion(const T& data) {
         #if __cplusplus < 201103L
-        return std::tr1::is_union<T>::value;
+        return false; // without compiler support we cannot distinguish union from class
         #else
         return __is_union(T);
         #endif
@@ -132,7 +132,7 @@ namespace Serialization {
     template<typename T>
     bool IsClass(const T& data) {
         #if __cplusplus < 201103L
-        return std::tr1::is_class<T>::value;
+        return std::tr1::__is_union_or_class<T>::value; // without compiler support we cannot distinguish union from class
         #else
         return __is_class(T);
         #endif
