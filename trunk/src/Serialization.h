@@ -35,6 +35,9 @@
 #include <vector>
 #include <map>
 #include <time.h>
+#if __cplusplus < 201103L
+# include <tr1/type_traits>
+#endif
 
 /** @brief Serialization / deserialization framework.
  *
