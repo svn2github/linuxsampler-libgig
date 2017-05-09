@@ -37,6 +37,9 @@
 #include <time.h>
 #if __cplusplus < 201103L
 # include <tr1/type_traits>
+# define LIBGIG_IS_CLASS(type) std::tr1::__is_union_or_class<type>::value //NOTE: without compiler support we cannot distinguish union from class
+#else
+# define LIBGIG_IS_CLASS(type) __is_class(type)
 #endif
 
 /** @brief Serialization / deserialization framework.
@@ -177,7 +180,7 @@ namespace Serialization {
         template<typename T>
         struct Resolver {
             static UID resolve(const T& obj) {
-                return (UID) { (ID) &obj, sizeof(obj) };
+                return UID { (ID) &obj, sizeof(obj) };
             }
         };
 
@@ -185,7 +188,7 @@ namespace Serialization {
         template<typename T>
         struct Resolver<T*> {
             static UID resolve(const T* const & obj) {
-                return (UID) { (ID) obj, sizeof(*obj) };
+                return UID { (ID) obj, sizeof(*obj) };
             }
         };
     };
@@ -637,8 +640,8 @@ namespace Serialization {
         class UIDChainResolver<T*> {
         public:
             UIDChainResolver(const T*& data) {
-                m_uid.push_back((UID) { &data, sizeof(data) });
-                m_uid.push_back((UID) { data, sizeof(*data) });
+                m_uid.push_back(UID { &data, sizeof(data) });
+                m_uid.push_back(UID { data, sizeof(*data) });
             }
 
             operator UIDChain() const { return m_uid; }
@@ -678,7 +681,7 @@ namespace Serialization {
 
         // Automatically handles recursion for class/struct types, while ignoring all primitive types.
         template<typename T>
-        struct SerializationRecursion : SerializationRecursionImpl<T, __is_class(T)> {
+        struct SerializationRecursion : SerializationRecursionImpl<T, LIBGIG_IS_CLASS(T)> {
         };
 
         class ObjectPool : public std::map<UID,Object> {
