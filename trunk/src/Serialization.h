@@ -113,17 +113,29 @@ namespace Serialization {
 
     template<typename T>
     bool IsEnum(const T& data) {
+        #if __cplusplus < 201103L
+        return std::is_enum<T>::value;
+        #else
         return __is_enum(T);
+        #endif
     }
 
     template<typename T>
     bool IsUnion(const T& data) {
+        #if __cplusplus < 201103L
+        return std::is_union<T>::value;
+        #else
         return __is_union(T);
+        #endif
     }
 
     template<typename T>
     bool IsClass(const T& data) {
+        #if __cplusplus < 201103L
+        return std::is_class<T>::value;
+        #else
         return __is_class(T);
+        #endif
     }
 
     /*template<typename T>
