@@ -38,7 +38,8 @@ namespace Serialization {
     // *
 
     static UID _createNullUID() {
-        return (UID) { NULL, 0 };
+        const UID uid = { NULL, 0 };
+        return uid;
     }
 
     const UID NO_UID = _createNullUID();
@@ -460,8 +461,10 @@ namespace Serialization {
     };
 
     static _Blob _decodeBlob(const char* p, const char* end, bool bThrow = true) {
-        if (!bThrow && p >= end)
-            return (_Blob) { p, end };
+        if (!bThrow && p >= end) {
+            const _Blob blob =  { p, end };
+            return blob;
+        }
         size_t sz = 0;
         for (; true; ++p) {
             if (p >= end)
@@ -476,7 +479,8 @@ namespace Serialization {
         ++p;
         if (p + sz > end)
             throw Exception("Decode Error: Premature end of blob");
-        return (_Blob) { p, p + sz };
+        const _Blob blob = { p, p + sz };
+        return blob;
     }
 
     template<typename T_int>
@@ -580,7 +584,8 @@ namespace Serialization {
         const ID id = (ID) _popIntBlob<size_t>(p, end);
         const size_t size = _popIntBlob<size_t>(p, end);
 
-        return (UID) { id, size };
+        const UID uid = { id, size };
+        return uid;
     }
 
     static UIDChain _popUIDChainBlob(const char*& p, const char* end) {

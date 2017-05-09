@@ -180,7 +180,8 @@ namespace Serialization {
         template<typename T>
         struct Resolver {
             static UID resolve(const T& obj) {
-                return UID { (ID) &obj, sizeof(obj) };
+                const UID uid = { (ID) &obj, sizeof(obj) };
+                return uid;
             }
         };
 
@@ -188,7 +189,8 @@ namespace Serialization {
         template<typename T>
         struct Resolver<T*> {
             static UID resolve(const T* const & obj) {
-                return UID { (ID) obj, sizeof(*obj) };
+                const UID uid = { (ID) obj, sizeof(*obj) };
+                return uid;
             }
         };
     };
@@ -640,8 +642,12 @@ namespace Serialization {
         class UIDChainResolver<T*> {
         public:
             UIDChainResolver(const T*& data) {
-                m_uid.push_back(UID { &data, sizeof(data) });
-                m_uid.push_back(UID { data, sizeof(*data) });
+                const UID uids[2] = {
+                    { &data, sizeof(data) },
+                    { data, sizeof(*data) }
+                };
+                m_uid.push_back(uids[0]);
+                m_uid.push_back(uids[1]);
             }
 
             operator UIDChain() const { return m_uid; }
