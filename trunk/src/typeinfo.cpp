@@ -46,7 +46,7 @@
         } \
     }; \
     \
-    static type##InfoRegistrator g_##type##InfoRegistrator;
+    static type##InfoRegistrator g_##type##InfoRegistrator
 
 struct EnumDeclaration {
     std::map<size_t, std::string> nameByValue;
