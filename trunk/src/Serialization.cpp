@@ -402,6 +402,55 @@ namespace Serialization {
         return s;
     }
 
+    template<typename T>
+    static T _primitiveObjectValueToNumber(const Object& obj) {
+        T value = 0;
+        const DataType& type = obj.type();
+        const ID& id = obj.uid().id;
+        void* ptr = obj.m_data.empty() ? (void*)id : (void*)&obj.m_data[0];
+        if (!obj.m_data.empty())
+            assert(type.size() == obj.m_data.size());
+        if (type.isPrimitive() && !type.isPointer()) {
+            if (type.isInteger() || type.isEnum()) {
+                if (type.isSigned()) {
+                    if (type.size() == 1)
+                        value = (T)*(int8_t*)ptr;
+                    else if (type.size() == 2)
+                        value = (T)*(int16_t*)ptr;
+                    else if (type.size() == 4)
+                        value = (T)*(int32_t*)ptr;
+                    else if (type.size() == 8)
+                        value = (T)*(int64_t*)ptr;
+                    else
+                        assert(false /* unknown signed int type size */);
+                } else {
+                    if (type.size() == 1)
+                        value = (T)*(uint8_t*)ptr;
+                    else if (type.size() == 2)
+                        value = (T)*(uint16_t*)ptr;
+                    else if (type.size() == 4)
+                        value = (T)*(uint32_t*)ptr;
+                    else if (type.size() == 8)
+                        value = (T)*(uint64_t*)ptr;
+                    else
+                        assert(false /* unknown unsigned int type size */);
+                }
+            } else if (type.isReal()) {
+                if (type.size() == sizeof(float))
+                    value = (T)*(float*)ptr;
+                else if (type.size() == sizeof(double))
+                    value = (T)*(double*)ptr;
+                else
+                    assert(false /* unknown floating point type */);
+            } else if (type.isBool()) {
+                value = (T)*(bool*)ptr;
+            } else {
+                assert(false /* unknown primitive type */);
+            }
+        }
+        return value;
+    }
+
     static String _encodePrimitiveValue(const Object& obj) {
         return _encodeBlob( _primitiveObjectValueToString(obj) );
     }
@@ -992,6 +1041,48 @@ namespace Serialization {
             pObject = &obj;
         }
         return _primitiveObjectValueToString(*pObject);
+    }
+
+    int64_t Archive::valueAsInt(const Object& object) {
+        if (!object)
+            throw Exception("Invalid object");
+        if (!object.type().isInteger() && !object.type().isEnum())
+            throw Exception("Object is neither an integer nor an enum");
+        const Object* pObject = &object;
+        if (object.type().isPointer()) {
+            const Object& obj = objectByUID(object.uid(1));
+            if (!obj) return 0;
+            pObject = &obj;
+        }
+        return _primitiveObjectValueToNumber<int64_t>(*pObject);
+    }
+
+    double Archive::valueAsReal(const Object& object) {
+        if (!object)
+            throw Exception("Invalid object");
+        if (!object.type().isReal())
+            throw Exception("Object is not an real type");
+        const Object* pObject = &object;
+        if (object.type().isPointer()) {
+            const Object& obj = objectByUID(object.uid(1));
+            if (!obj) return 0;
+            pObject = &obj;
+        }
+        return _primitiveObjectValueToNumber<double>(*pObject);
+    }
+
+    bool Archive::valueAsBool(const Object& object) {
+        if (!object)
+            throw Exception("Invalid object");
+        if (!object.type().isBool())
+            throw Exception("Object is not a bool");
+        const Object* pObject = &object;
+        if (object.type().isPointer()) {
+            const Object& obj = objectByUID(object.uid(1));
+            if (!obj) return 0;
+            pObject = &obj;
+        }
+        return _primitiveObjectValueToNumber<bool>(*pObject);
     }
 
     // *************** Archive::Syncer ***************

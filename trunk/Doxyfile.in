@@ -76,6 +76,7 @@ INPUT                  = @top_srcdir@/src/RIFF.h \
                          @top_srcdir@/src/Korg.cpp \
                          @top_srcdir@/src/Akai.h \
                          @top_srcdir@/src/Akai.cpp \
+                         @top_srcdir@/src/typeinfo.cpp \
                          @top_srcdir@/doc/mainpage.dox
 FILE_PATTERNS          = *.c \
                          *.cpp \
@@ -181,12 +182,15 @@ PERLMOD_MAKEVAR_PREFIX =
 # Configuration options related to the preprocessor
 #---------------------------------------------------------------------------
 ENABLE_PREPROCESSING   = YES
-MACRO_EXPANSION        = NO
-EXPAND_ONLY_PREDEF     = NO
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  =
-PREDEFINED             =
+PREDEFINED             = "GIG_DECLARE_ENUM(type,...)=enum type { __VA_ARGS__ }" \
+                         "DLS_DECLARE_ENUM(type,...)=enum type { __VA_ARGS__ }" \
+                         "RIFF_DECLARE_ENUM(type,...)=enum type { __VA_ARGS__ }" \
+                         "HAVE_RTTI=1"
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

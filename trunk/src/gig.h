@@ -27,6 +27,20 @@
 #include "DLS.h"
 #include <vector>
 
+#ifndef __has_feature
+# define __has_feature(x) 0
+#endif
+#ifndef HAVE_RTTI
+# if __GXX_RTTI || __has_feature(cxx_rtti) || _CPPRTTI
+#  define HAVE_RTTI 1
+# else
+#  define HAVE_RTTI 0
+# endif
+#endif
+#if HAVE_RTTI
+# include <typeinfo>
+#endif
+
 #if WORDS_BIGENDIAN
 # define LIST_TYPE_3PRG	0x33707267
 # define LIST_TYPE_3EWL	0x3365776C
@@ -65,6 +79,10 @@
 # define CHUNK_ID_SCSL  0x4c534353 // own gig format extension
 #endif // WORDS_BIGENDIAN
 
+#ifndef GIG_DECLARE_ENUM
+# define GIG_DECLARE_ENUM(type, ...) enum type { __VA_ARGS__ }
+#endif
+
 // just symbol prototyping (since Serialization.h not included by default here)
 namespace Serialization { class Archive; }
 
@@ -93,66 +111,90 @@ namespace gig {
         }
     };
 
-    /** Standard types of sample loops. */
-    typedef enum {
+    /** Standard types of sample loops.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(loop_type_t,
         loop_type_normal        = 0x00000000,  ///< Loop forward (normal)
         loop_type_bidirectional = 0x00000001,  ///< Alternating loop (forward/backward, also known as Ping Pong)
         loop_type_backward      = 0x00000002   ///< Loop backward (reverse)
-    } loop_type_t;
+    );
 
-    /** Society of Motion Pictures and Television E time format. */
-    typedef enum {
+    /** Society of Motion Pictures and Television E time format.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(smpte_format_t,
         smpte_format_no_offset          = 0x00000000,  ///< no SMPTE offset
         smpte_format_24_frames          = 0x00000018,  ///< 24 frames per second
         smpte_format_25_frames          = 0x00000019,  ///< 25 frames per second
         smpte_format_30_frames_dropping = 0x0000001D,  ///< 30 frames per second with frame dropping (30 drop)
         smpte_format_30_frames          = 0x0000001E   ///< 30 frames per second
-    } smpte_format_t;
+    );
 
-    /** Defines the shape of a function graph. */
-    typedef enum {
+    /** Defines the shape of a function graph.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(curve_type_t,
         curve_type_nonlinear = 0,
         curve_type_linear    = 1,
         curve_type_special   = 2,
         curve_type_unknown   = 0xffffffff
-    } curve_type_t;
+    );
 
-    /** Dimensions allow to bypass one of the following controllers. */
-    typedef enum {
+    /** Dimensions allow to bypass one of the following controllers.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(dim_bypass_ctrl_t,
         dim_bypass_ctrl_none,
         dim_bypass_ctrl_94,   ///< Effect 4 Depth (MIDI Controller 94)
         dim_bypass_ctrl_95    ///< Effect 5 Depth (MIDI Controller 95)
-    } dim_bypass_ctrl_t;
+    );
 
-    /** Defines how LFO3 is controlled by. */
-    typedef enum {
+    /** Defines how LFO3 is controlled by.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(lfo3_ctrl_t,
         lfo3_ctrl_internal            = 0x00, ///< Only internally controlled.
         lfo3_ctrl_modwheel            = 0x01, ///< Only controlled by external modulation wheel.
         lfo3_ctrl_aftertouch          = 0x02, ///< Only controlled by aftertouch controller.
         lfo3_ctrl_internal_modwheel   = 0x03, ///< Controlled internally and by external modulation wheel.
         lfo3_ctrl_internal_aftertouch = 0x04  ///< Controlled internally and by aftertouch controller.
-    } lfo3_ctrl_t;
+    );
 
-    /** Defines how LFO2 is controlled by. */
-    typedef enum {
+    /** Defines how LFO2 is controlled by.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(lfo2_ctrl_t,
         lfo2_ctrl_internal            = 0x00, ///< Only internally controlled.
         lfo2_ctrl_modwheel            = 0x01, ///< Only controlled by external modulation wheel.
         lfo2_ctrl_foot                = 0x02, ///< Only controlled by external foot controller.
         lfo2_ctrl_internal_modwheel   = 0x03, ///< Controlled internally and by external modulation wheel.
         lfo2_ctrl_internal_foot       = 0x04  ///< Controlled internally and by external foot controller.
-    } lfo2_ctrl_t;
+    );
 
-    /** Defines how LFO1 is controlled by. */
-    typedef enum {
+    /** Defines how LFO1 is controlled by.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(lfo1_ctrl_t,
         lfo1_ctrl_internal            = 0x00, ///< Only internally controlled.
         lfo1_ctrl_modwheel            = 0x01, ///< Only controlled by external modulation wheel.
         lfo1_ctrl_breath              = 0x02, ///< Only controlled by external breath controller.
         lfo1_ctrl_internal_modwheel   = 0x03, ///< Controlled internally and by external modulation wheel.
         lfo1_ctrl_internal_breath     = 0x04  ///< Controlled internally and by external breath controller.
-    } lfo1_ctrl_t;
+    );
 
-    /** Defines how the filter cutoff frequency is controlled by. */
-    typedef enum {
+    /** Defines how the filter cutoff frequency is controlled by.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(vcf_cutoff_ctrl_t,
         vcf_cutoff_ctrl_none         = 0x00,
         vcf_cutoff_ctrl_none2        = 0x01,  ///< The difference between none and none2 is unknown
         vcf_cutoff_ctrl_modwheel     = 0x81,  ///< Modulation Wheel (MIDI Controller 1)
@@ -165,16 +207,19 @@ namespace gig {
         vcf_cutoff_ctrl_genpurpose7  = 0xd2,  ///< General Purpose Controller 7 (Button, MIDI Controller 82)
         vcf_cutoff_ctrl_genpurpose8  = 0xd3,  ///< General Purpose Controller 8 (Button, MIDI Controller 83)
         vcf_cutoff_ctrl_aftertouch   = 0x80   ///< Key Pressure
-    } vcf_cutoff_ctrl_t;
+    );
 
-    /** Defines how the filter resonance is controlled by. */
-    typedef enum {
+    /** Defines how the filter resonance is controlled by.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(vcf_res_ctrl_t,
         vcf_res_ctrl_none        = 0xffffffff,
         vcf_res_ctrl_genpurpose3 = 0,           ///< General Purpose Controller 3 (Slider, MIDI Controller 18)
         vcf_res_ctrl_genpurpose4 = 1,           ///< General Purpose Controller 4 (Slider, MIDI Controller 19)
         vcf_res_ctrl_genpurpose5 = 2,           ///< General Purpose Controller 5 (Button, MIDI Controller 80)
         vcf_res_ctrl_genpurpose6 = 3            ///< General Purpose Controller 6 (Button, MIDI Controller 81)
-    } vcf_res_ctrl_t;
+    );
 
     /**
      * Defines a controller that has a certain contrained influence on a
@@ -185,12 +230,16 @@ namespace gig {
      * attenuation_ctrl_t, eg1_ctrl_t or eg2_ctrl_t) in your code!
      */
     struct leverage_ctrl_t {
-        typedef enum {
+        /** Defines possible controllers.
+         *
+         * @see countEnum(), enumKey(), enumKeys(), enumValue()
+         */
+        GIG_DECLARE_ENUM(type_t,
             type_none              = 0x00, ///< No controller defined
             type_channelaftertouch = 0x2f, ///< Channel Key Pressure
             type_velocity          = 0xff, ///< Key Velocity
             type_controlchange     = 0xfe  ///< Ordinary MIDI control change controller, see field 'controller_number'
-        } type_t;
+        );
 
         type_t type;              ///< Controller type
         uint   controller_number; ///< MIDI controller number if this controller is a control change controller, 0 otherwise
@@ -225,8 +274,10 @@ namespace gig {
      * dimension zones is always a power of two. All dimensions can have up
      * to 32 zones (except the layer dimension with only up to 8 zones and
      * the samplechannel dimension which currently allows only 2 zones).
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
      */
-    typedef enum {
+    GIG_DECLARE_ENUM(dimension_t,
         dimension_none              = 0x00, ///< Dimension not in use.
         dimension_samplechannel     = 0x80, ///< If used sample has more than one channel (thus is not mono).
         dimension_layer             = 0x81, ///< For layering of up to 8 instruments (and eventually crossfading of 2 or 4 layers).
@@ -261,16 +312,18 @@ namespace gig {
         dimension_effect3depth      = 0x5d, ///< Effect 3 Depth (MIDI Controller 93)
         dimension_effect4depth      = 0x5e, ///< Effect 4 Depth (MIDI Controller 94)
         dimension_effect5depth      = 0x5f  ///< Effect 5 Depth (MIDI Controller 95)
-    } dimension_t;
+    );
 
     /**
      * Intended for internal usage: will be used to convert a dimension value
      * into the corresponding dimension bit number.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
      */
-    typedef enum {
+    GIG_DECLARE_ENUM(split_type_t,
         split_type_normal,         ///< dimension value between 0-127
         split_type_bit             ///< dimension values are already the sought bit number
-    } split_type_t;
+    );
 
     /** General dimension definition. */
     struct dimension_def_t {
@@ -281,14 +334,17 @@ namespace gig {
         float        zone_size;  ///< Intended for internal usage: reflects the size of each zone (128/zones) for normal split types only, 0 otherwise.
     };
 
-    /** Defines which frequencies are filtered by the VCF. */
-    typedef enum {
+    /** Defines which frequencies are filtered by the VCF.
+     *
+     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(vcf_type_t,
         vcf_type_lowpass      = 0x00,
         vcf_type_lowpassturbo = 0xff, ///< More poles than normal lowpass
         vcf_type_bandpass     = 0x01,
         vcf_type_highpass     = 0x02,
         vcf_type_bandreject   = 0x03
-    } vcf_type_t;
+    );
 
     /**
      * Defines the envelope of a crossfade.
@@ -1310,6 +1366,18 @@ namespace gig {
             Exception(String Message);
             void PrintMessage();
     };
+
+#if HAVE_RTTI
+    size_t countEnum(const std::type_info& type);
+    size_t countEnum(String typeName);
+    const char* enumKey(const std::type_info& type, size_t value);
+    const char* enumKey(String typeName, size_t value);
+    bool        enumKey(const std::type_info& type, String key);
+    bool        enumKey(String typeName, String key);
+    const char** enumKeys(const std::type_info& type);
+    const char** enumKeys(String typeName);
+    size_t enumValue(String key);
+#endif // HAVE_RTTI
 
     String libraryName();
     String libraryVersion();

@@ -210,6 +210,9 @@ namespace Serialization {
     static Object _popObjectBlob(const char*& p, const char* end);
     static void _popPrimitiveValue(const char*& p, const char* end, Object& obj);
     static String _primitiveObjectValueToString(const Object& obj);
+    //  |
+    template<typename T>
+    static T _primitiveObjectValueToNumber(const Object& obj);
 
     /** @brief Abstract reflection of a native C++ data type.
      *
@@ -414,6 +417,10 @@ namespace Serialization {
         friend Object _popObjectBlob(const char*& p, const char* end);
         friend void _popPrimitiveValue(const char*& p, const char* end, Object& obj);
         friend String _primitiveObjectValueToString(const Object& obj);
+
+        template<typename T>
+        friend T _primitiveObjectValueToNumber(const Object& obj);
+
         friend class Archive;
     };
 
@@ -613,6 +620,9 @@ namespace Serialization {
         void setBoolValue(Object& object, bool value);
         void setEnumValue(Object& object, uint64_t value);
         String valueAsString(const Object& object);
+        int64_t valueAsInt(const Object& object);
+        double valueAsReal(const Object& object);
+        bool valueAsBool(const Object& object);
         String name() const;
         void setName(String name);
         String comment() const;
