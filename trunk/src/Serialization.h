@@ -242,7 +242,7 @@ namespace Serialization {
         bool operator>(const DataType& other) const;
         String asLongDescr() const;
         String baseTypeName() const { return m_baseTypeName; }
-        String customTypeName() const { return m_customTypeName; }
+        String customTypeName(bool demangle = false) const;
 
         template<typename T>
         static DataType dataTypeOf(const T& data) {

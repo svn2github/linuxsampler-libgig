@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <string.h> // for memcpy()
 #include <stdlib.h> // for atof()
+#include <cxxabi.h>
 
 #include "helper.h"
 
@@ -127,13 +128,20 @@ namespace Serialization {
     }
 
     String DataType::asLongDescr() const {
-        //TODO: Demangling of C++ raw type names
         String s = m_baseTypeName;
         if (!m_customTypeName.empty())
-            s += " " + m_customTypeName;
+            s += " " + customTypeName(true);
         if (isPointer())
             s += " pointer";
         return s;
+    }
+
+    String DataType::customTypeName(bool demangle) const {
+        if (!demangle) return m_customTypeName;
+        int status;
+        const char* result =
+            abi::__cxa_demangle(m_customTypeName.c_str(), 0, 0, &status);
+        return (status == 0) ? result : m_customTypeName;
     }
 
     // *************** Member ***************

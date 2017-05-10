@@ -39,6 +39,8 @@
 #endif
 #if HAVE_RTTI
 # include <typeinfo>
+#else
+# warning No RTTI available!
 #endif
 
 #if WORDS_BIGENDIAN
@@ -1369,15 +1371,15 @@ namespace gig {
 
 #if HAVE_RTTI
     size_t countEnum(const std::type_info& type);
-    size_t countEnum(String typeName);
     const char* enumKey(const std::type_info& type, size_t value);
-    const char* enumKey(String typeName, size_t value);
     bool        enumKey(const std::type_info& type, String key);
-    bool        enumKey(String typeName, String key);
     const char** enumKeys(const std::type_info& type);
+#endif // HAVE_RTTI
+    size_t countEnum(String typeName);
+    const char* enumKey(String typeName, size_t value);
+    bool        enumKey(String typeName, String key);
     const char** enumKeys(String typeName);
     size_t enumValue(String key);
-#endif // HAVE_RTTI
 
     String libraryName();
     String libraryVersion();
