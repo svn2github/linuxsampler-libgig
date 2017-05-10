@@ -26,6 +26,7 @@
 #include <string>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h> // for strdup()
 
 #if defined _MSC_VER // Microsoft compiler ...
 # define RAW_CPP_TYPENAME(t) t.raw_name()
