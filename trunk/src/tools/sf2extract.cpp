@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- *   sf2extract tool: Copyright (C) 2015 by Christian Schoenebeck          *
+ *   sf2extract tool: Copyright (C) 2015 - 2017 by Christian Schoenebeck   *
  *                                          <cuse@users.sf.net>            *
  *                                                                         *
  *   SF2 C++ Library: Copyright (C) 2009-2010 by Grigor Iliev              *
@@ -232,6 +232,7 @@ inline void stripWhiteSpace(string& s) {
 }
 
 static bool endsWith(const string& haystack, const string& needle) {
+    if (haystack.size() < needle.size()) return false;
     return haystack.substr(haystack.size() - needle.size(), needle.size()) == needle;
 }
 

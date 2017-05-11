@@ -8,6 +8,8 @@ Version SVN trunk
       which allows to serialize and deserialize native C++ objects
       in a portable, easy and flexible way.
     - print compiler warning if no RTTI available
+    - Fixed potential crash in command line tools gig2stereo, korg2gig,
+      korgdump and sf2extract.
 
   * src/gig.cpp, src/gig.h:
     - fixed bug in Script::SetGroup: the script chunk wasn't moved

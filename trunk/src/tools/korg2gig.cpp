@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- *   Copyright (C) 2014-2015 Christian Schoenebeck                         *
+ *   Copyright (C) 2014-2017 Christian Schoenebeck                         *
  *                      <cuse@users.sourceforge.net>                       *
  *                                                                         *
  *   This program is part of libgig.                                       *
@@ -68,6 +68,7 @@ static bool beginsWith(const string& haystack, const string& needle) {
 }
 
 static bool endsWith(const string& haystack, const string& needle) {
+    if (haystack.size() < needle.size()) return false;
     return haystack.substr(haystack.size() - needle.size(), needle.size()) == needle;
 }
 

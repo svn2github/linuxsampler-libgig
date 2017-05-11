@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2015 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This program is part of libgig.                                       *
@@ -89,6 +89,7 @@ static bool isGigFileName(const string path) {
 }
 
 static bool endsWith(const string& haystack, const string& needle, bool caseSensitive) {
+    if (haystack.size() < needle.size()) return false;
     const string sub = haystack.substr(haystack.size() - needle.size(), needle.size());
     return (caseSensitive) ? (sub == needle) : (!strcasecmp(sub.c_str(), needle.c_str()));
 }
