@@ -35,7 +35,28 @@
 #include <vector>
 #include <map>
 #include <time.h>
-#if __cplusplus < 201103L
+
+#ifndef __has_extension
+# define __has_extension(x) 0
+#endif
+
+#ifndef HAS_BUILTIN_TYPE_TRAITS
+# if __cplusplus >= 201103L
+#  define HAS_BUILTIN_TYPE_TRAITS 1
+# elif ( __has_extension(is_class) && __has_extension(is_enum) )
+#  define HAS_BUILTIN_TYPE_TRAITS 1
+# elif ( __GNUC__ > 4 || ( __GNUC__ == 4 && __GNUC_MINOR__ >= 3 ) )
+#  define HAS_BUILTIN_TYPE_TRAITS 1
+# elif _MSC_VER >= 1400 /* MS Visual C++ 8.0 (Visual Studio 2005) */
+#  define HAS_BUILTIN_TYPE_TRAITS 1
+# elif __INTEL_COMPILER >= 1100
+#  define HAS_BUILTIN_TYPE_TRAITS 1
+# else
+#  define HAS_BUILTIN_TYPE_TRAITS 0
+# endif
+#endif
+
+#if !HAS_BUILTIN_TYPE_TRAITS
 # include <tr1/type_traits>
 # define LIBGIG_IS_CLASS(type) std::tr1::__is_union_or_class<type>::value //NOTE: without compiler support we cannot distinguish union from class
 #else
@@ -116,7 +137,7 @@ namespace Serialization {
 
     template<typename T>
     bool IsEnum(const T& data) {
-        #if __cplusplus < 201103L
+        #if !HAS_BUILTIN_TYPE_TRAITS
         return std::tr1::is_enum<T>::value;
         #else
         return __is_enum(T);
@@ -125,7 +146,7 @@ namespace Serialization {
 
     template<typename T>
     bool IsUnion(const T& data) {
-        #if __cplusplus < 201103L
+        #if !HAS_BUILTIN_TYPE_TRAITS
         return false; // without compiler support we cannot distinguish union from class
         #else
         return __is_union(T);
@@ -134,7 +155,7 @@ namespace Serialization {
 
     template<typename T>
     bool IsClass(const T& data) {
-        #if __cplusplus < 201103L
+        #if !HAS_BUILTIN_TYPE_TRAITS
         return std::tr1::__is_union_or_class<T>::value; // without compiler support we cannot distinguish union from class
         #else
         return __is_class(T);
