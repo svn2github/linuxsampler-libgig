@@ -187,7 +187,7 @@ namespace gig {
      * @param typeName - raw C++ type name of enum
      * @returns enum's amount of elements
      */
-    size_t countEnum(String typeName) {
+    size_t enumCount(String typeName) {
         if (!g_enumsByRawTypeName.count(typeName))
             return 0;
         return g_enumsByRawTypeName[typeName].countKeys();
@@ -203,8 +203,8 @@ namespace gig {
      * @param type - enum type of interest
      * @returns enum's amount of elements
      */
-    size_t countEnum(const std::type_info& type) {
-        return countEnum(RAW_CPP_TYPENAME(type));
+    size_t enumCount(const std::type_info& type) {
+        return enumCount(RAW_CPP_TYPENAME(type));
     }
 
     /** @brief Numeric value of enum constant.

@@ -115,7 +115,7 @@ namespace gig {
 
     /** Standard types of sample loops.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(loop_type_t,
         loop_type_normal        = 0x00000000,  ///< Loop forward (normal)
@@ -125,7 +125,7 @@ namespace gig {
 
     /** Society of Motion Pictures and Television E time format.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(smpte_format_t,
         smpte_format_no_offset          = 0x00000000,  ///< no SMPTE offset
@@ -137,7 +137,7 @@ namespace gig {
 
     /** Defines the shape of a function graph.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(curve_type_t,
         curve_type_nonlinear = 0,
@@ -148,7 +148,7 @@ namespace gig {
 
     /** Dimensions allow to bypass one of the following controllers.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(dim_bypass_ctrl_t,
         dim_bypass_ctrl_none,
@@ -158,7 +158,7 @@ namespace gig {
 
     /** Defines how LFO3 is controlled by.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(lfo3_ctrl_t,
         lfo3_ctrl_internal            = 0x00, ///< Only internally controlled.
@@ -170,7 +170,7 @@ namespace gig {
 
     /** Defines how LFO2 is controlled by.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(lfo2_ctrl_t,
         lfo2_ctrl_internal            = 0x00, ///< Only internally controlled.
@@ -182,7 +182,7 @@ namespace gig {
 
     /** Defines how LFO1 is controlled by.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(lfo1_ctrl_t,
         lfo1_ctrl_internal            = 0x00, ///< Only internally controlled.
@@ -194,7 +194,7 @@ namespace gig {
 
     /** Defines how the filter cutoff frequency is controlled by.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(vcf_cutoff_ctrl_t,
         vcf_cutoff_ctrl_none         = 0x00,
@@ -213,7 +213,7 @@ namespace gig {
 
     /** Defines how the filter resonance is controlled by.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(vcf_res_ctrl_t,
         vcf_res_ctrl_none        = 0xffffffff,
@@ -234,7 +234,7 @@ namespace gig {
     struct leverage_ctrl_t {
         /** Defines possible controllers.
          *
-         * @see countEnum(), enumKey(), enumKeys(), enumValue()
+         * @see enumCount(), enumKey(), enumKeys(), enumValue()
          */
         GIG_DECLARE_ENUM(type_t,
             type_none              = 0x00, ///< No controller defined
@@ -277,7 +277,7 @@ namespace gig {
      * to 32 zones (except the layer dimension with only up to 8 zones and
      * the samplechannel dimension which currently allows only 2 zones).
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(dimension_t,
         dimension_none              = 0x00, ///< Dimension not in use.
@@ -320,7 +320,7 @@ namespace gig {
      * Intended for internal usage: will be used to convert a dimension value
      * into the corresponding dimension bit number.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(split_type_t,
         split_type_normal,         ///< dimension value between 0-127
@@ -338,7 +338,7 @@ namespace gig {
 
     /** Defines which frequencies are filtered by the VCF.
      *
-     * @see countEnum(), enumKey(), enumKeys(), enumValue()
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(vcf_type_t,
         vcf_type_lowpass      = 0x00,
@@ -1370,12 +1370,12 @@ namespace gig {
     };
 
 #if HAVE_RTTI
-    size_t countEnum(const std::type_info& type);
+    size_t enumCount(const std::type_info& type);
     const char* enumKey(const std::type_info& type, size_t value);
     bool        enumKey(const std::type_info& type, String key);
     const char** enumKeys(const std::type_info& type);
 #endif // HAVE_RTTI
-    size_t countEnum(String typeName);
+    size_t enumCount(String typeName);
     const char* enumKey(String typeName, size_t value);
     bool        enumKey(String typeName, String key);
     const char** enumKeys(String typeName);

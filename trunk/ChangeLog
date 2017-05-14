@@ -35,7 +35,7 @@ Version SVN trunk
     - Added support for serializing & deserializing DimensionRegion
       objects (and crossfade_t and leverage_ctrl_t objects).
     - Added enum reflection API functions for retrieving enum declaration type
-      information at runtime (countEnum(), enumKey(), enumKeys(), enumValue()).
+      information at runtime (enumCount(), enumKey(), enumKeys(), enumValue()).
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files
