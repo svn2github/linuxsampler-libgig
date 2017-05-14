@@ -1817,6 +1817,11 @@ namespace {
     }
 
     void DimensionRegion::serialize(Serialization::Archive* archive) {
+        // in case this class will become backward incompatible one day,
+        // then set a version and minimum version for this class like:
+        //archive->setVersion(*this, 2);
+        //archive->setMinVersion(*this, 1);
+
         SRLZ(VelocityUpperLimit);
         SRLZ(EG1PreAttack);
         SRLZ(EG1Attack);

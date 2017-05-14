@@ -124,12 +124,6 @@ namespace Serialization {
 
     typedef uint32_t Version;
 
-    enum operation_t {
-        OPERATION_NONE,
-        OPERATION_SERIALIZE,
-        OPERATION_DESERIALIZE
-    };
-
     enum time_base_t {
         LOCAL_TIME,
         UTC_TIME
@@ -394,21 +388,9 @@ namespace Serialization {
         const UIDChain& uidChain() const { return m_uid; }
         const DataType& type() const { return m_type; }
         const RawData& rawData() const { return m_data; }
-
         Version version() const { return m_version; }
-
-        void setVersion(Version v) {
-            m_version = v;
-        }
-
         Version minVersion() const { return m_minVersion; }
-
-        void setMinVersion(Version v) {
-            m_minVersion = v;
-        }
-
         bool isVersionCompatibleTo(const Object& other) const;
-
         std::vector<Member>& members() { return m_members; }
         const std::vector<Member>& members() const { return m_members; }
         Member memberNamed(String name) const;
@@ -425,6 +407,8 @@ namespace Serialization {
 
     protected:
         void remove(const Member& member);
+        void setVersion(Version v);
+        void setMinVersion(Version v);
 
     private:
         DataType m_type;
@@ -557,6 +541,10 @@ namespace Serialization {
      * Note that there is only one method that you need to implement. So the
      * respective serialize() method implementation of your classes/structs are
      * both called for serialization, as well as for deserialization!
+     *
+     * In case you need to enforce backward incompatiblity for one of your C++
+     * classes, you can do so by setting a version and minimum version for your
+     * class (see @c setVersion() and @c setMinVersion() for details).
      */
     class Archive {
     public:
@@ -602,8 +590,8 @@ namespace Serialization {
         template<typename T_classType, typename T_memberType>
         void serializeMember(const T_classType& nativeObject, const T_memberType& nativeMember, const char* memberName) {
             const size_t offset =
-            ((const uint8_t*)(const void*)&nativeMember) -
-            ((const uint8_t*)(const void*)&nativeObject);
+                ((const uint8_t*)(const void*)&nativeMember) -
+                ((const uint8_t*)(const void*)&nativeObject);
             const UIDChain uids = UIDChainResolver<T_memberType>(nativeMember);
             const DataType type = DataType::dataTypeOf(nativeMember);
             const Member member(memberName, uids[0], offset, type);
@@ -627,6 +615,90 @@ namespace Serialization {
             }
         }
 
+        /** @brief Set version number for your C++ class.
+         *
+         * By calling this method you can store a version number for your
+         * current C++ class (that is a version for its current data structure
+         * layout and method implementations) with serialized archive.
+         *
+         * Along with calling @c setMinVersion() this provides a way for you
+         * to constrain backward compatiblity regarding serialization and
+         * deserialization of your class which the Archive class will obey to.
+         * If required, then typically you might do so in your @c serialize()
+         * method implementation like:
+         * @code
+         * #define SRLZ(member) \
+         *   archive->serializeMember(*this, member, #member);
+         *
+         * void Foo::serialize(Serialization::Archive* archive) {
+         *     // when serializing: the current version of this class that is
+         *     // going to be stored with the serialized archive
+         *     archive->setVersion(*this, 6);
+         *     // when deserializing: the minimum allowed version of this class
+         *     // being serialized in the past
+         *     archive->setMinVersion(*this, 3);
+         *     // actual data mebers to serialize / deserialize
+         *     SRLZ(a);
+         *     SRLZ(b);
+         *     SRLZ(c);
+         * }
+         * @endcode
+         * In this example above, the C++ clas "Foo" would be serialized along
+         * with the version number @c 6 in the resulting archive (and its raw
+         * data stream respectively).
+         *
+         * When deserializing archives with the example C++ class code above,
+         * the Archive object would check whether your originally serialized
+         * C++ "Foo" object had at least version number @c 3, if not the
+         * deserialization process would automatically be stopped with a
+         * @c Serialization::Exception, claiming that the classes are version
+         * incompatible.
+         *
+         * Since this Serialization / deserialization framework is designed to
+         * be robust on changes to your C++ classes and aims trying to
+         * deserialize all your C++ objects correctly even if your C++ classes
+         * have seen substantial software changes in the meantime; you might
+         * sometimes see it as necessary to constrain backward compatiblity
+         * this way.
+         *
+         * @param nativeObject - your C++ object you want to set a version for
+         * @param v - the version number to set for your C++ class (by default,
+         *            that is if you do not explicitly call this method, then
+         *            your C++ object will be stored with version number @c 0 ).
+         */
+        template<typename T_classType>
+        void setVersion(const T_classType& nativeObject, Version v) {
+            const UID uid = UID::from(nativeObject);
+            Object& obj = m_allObjects[uid];
+            if (!obj) {
+                const UIDChain uids = UIDChainResolver<T_classType>(nativeObject);
+                const DataType type = DataType::dataTypeOf(nativeObject);
+                obj = Object(uids, type);
+            }
+            setVersion(obj, v);
+        }
+
+        /** @brief Set a minimum version number for your C++ class.
+         *
+         * Call this method to define a minimum version that your current C++
+         * class implementation would be compatible with when it comes to 
+         * deserialization of an archive containing an object with an older
+         * version of your C++ class.
+         *
+         * @see @c setVersion() for more details about this overall topic.
+         */
+        template<typename T_classType>
+        void setMinVersion(const T_classType& nativeObject, Version v) {
+            const UID uid = UID::from(nativeObject);
+            Object& obj = m_allObjects[uid];
+            if (!obj) {
+                const UIDChain uids = UIDChainResolver<T_classType>(nativeObject);
+                const DataType type = DataType::dataTypeOf(nativeObject);
+                obj = Object(uids, type);
+            }
+            setMinVersion(obj, v);
+        }
+
         virtual void decode(const RawData& data);
         virtual void decode(const uint8_t* data, size_t size);
         void clear();
@@ -644,6 +716,8 @@ namespace Serialization {
         int64_t valueAsInt(const Object& object);
         double valueAsReal(const Object& object);
         bool valueAsBool(const Object& object);
+        void setVersion(Object& object, Version v);
+        void setMinVersion(Object& object, Version v);
         String name() const;
         void setName(String name);
         String comment() const;
@@ -754,6 +828,12 @@ namespace Serialization {
         private:
             Archive& m_dst;
             Archive& m_src;
+        };
+
+        enum operation_t {
+            OPERATION_NONE,
+            OPERATION_SERIALIZE,
+            OPERATION_DESERIALIZE
         };
 
         virtual void encode();

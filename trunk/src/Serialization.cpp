@@ -240,6 +240,14 @@ namespace Serialization {
             return other.minVersion() <= this->version();
     }
 
+    void Object::setVersion(Version v) {
+        m_version = v;
+    }
+
+    void Object::setMinVersion(Version v) {
+        m_minVersion = v;
+    }
+
     Member Object::memberNamed(String name) const {
         for (int i = 0; i < m_members.size(); ++i)
             if (m_members[i].name() == name)
@@ -910,6 +918,18 @@ namespace Serialization {
 
     Object& Archive::objectByUID(const UID& uid) {
         return m_allObjects[uid];
+    }
+
+    void Archive::setVersion(Object& object, Version v) {
+        if (!object) return;
+        object.setVersion(v);
+        m_isModified = true;
+    }
+
+    void Archive::setMinVersion(Object& object, Version v) {
+        if (!object) return;
+        object.setMinVersion(v);
+        m_isModified = true;
     }
 
     void Archive::setEnumValue(Object& object, uint64_t value) {
