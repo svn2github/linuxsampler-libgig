@@ -58,7 +58,7 @@ following four major parts:
     sounds.
 
 Besides the mentioned major parts above, libgig also provides the following
-two other components:
+three other components:
 
   - @b 5. @ref DLS classes: Provide convenient methods to access
     @b DLS (<i>Downloadable Sounds</i>) Level 1 and 2 files. The DLS file format
@@ -81,6 +81,11 @@ two other components:
     file format are all based on RIFF on lowest level of their file format. And
     consequently all those classes mentioned above are using the RIFF classes
     for that purpose.
+
+  - @b 7. @ref Serialization classes: This is a separate framework on its own,
+    which allows efficient and powerful serialization and deserialization of
+    native C++ objects and is used by @ref gig classes and i.e. the gigedit
+    application for implementing a preset system.
 
 
 @section License

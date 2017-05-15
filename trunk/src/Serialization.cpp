@@ -45,6 +45,17 @@ namespace Serialization {
 
     const UID NO_UID = _createNullUID();
 
+    /** @brief Check whether this is a valid unique identifier.
+     *
+     * Returns @c false if this UID can be considered an invalid unique
+     * identifier. This is for example the case if this UID object was not
+     * explicitly set to some certain meaningful unique identifier value, or if
+     * this UID object was intentionally assigned the constant @c NO_UID value.
+     * Both represent essentially an UID object which is all zero.
+     *
+     * Note that this class also implements the @c bool operator, both return
+     * the same boolean result.
+     */
     bool UID::isValid() const {
         return id != NULL && id != (void*)-1 && size;
     }
@@ -52,6 +63,15 @@ namespace Serialization {
     // *************** DataType ***************
     // *
 
+    /** @brief Default constructor.
+     *
+     * Initializes a DataType object as being an "invalid" DataType object.
+     * Thus calling isValid(), after creating a DataType object with this
+     * constructor, would return @c false.
+     *
+     * To create a valid and meaningful DataType object instead, call the static
+     * function DataType::dataTypeOf() instead.
+     */
     DataType::DataType() {
         m_size = 0;
         m_isPointer = false;
@@ -64,44 +84,173 @@ namespace Serialization {
         m_customTypeName = customType;
     }
 
+    /** @brief Check if this is a valid DataType object.
+     *
+     * Returns @c true if this DataType object is reflecting a valid data type.
+     * The default constructor creates DataType objects initialized to be
+     * "invalid" DataType objects by default. That way one can detect whether
+     * a DataType object was ever assigned to something meaningful.
+     *
+     * Note that this class also implements the @c bool operator, both return
+     * the same boolean result.
+     */
     bool DataType::isValid() const {
         return m_size;
     }
 
+    /** @brief Whether this is reflecting a C/C++ pointer type.
+     *
+     * Returns @true if the respective native C/C++ object, member or variable
+     * (this DataType instance is reflecting) is a C/C++ pointer type.
+     */
     bool DataType::isPointer() const {
         return m_isPointer;
     }
 
+    /** @brief Whether this is reflecting a C/C++ @c struct or @c class type.
+     *
+     * Returns @c true if the respective native C/C++ object, member or variable
+     * (this DataType instance is reflecting) is a C/C++ @c struct or @c class
+     * type.
+     *
+     * Note that in the following example:
+     * @code
+     * struct Foo {
+     *     int  a;
+     *     bool b;
+     * };
+     * Foo foo;
+     * Foo* pFoo;
+     * @endcode
+     * the DataType objects of both @c foo, as well as of the C/C++ pointer
+     * @c pFoo would both return @c true for isClass() here!
+     *
+     * @see isPointer()
+     */
     bool DataType::isClass() const {
         return m_baseTypeName == "class";
     }
 
+    /** @brief Whether this is reflecting a fundamental C/C++ data type.
+     *
+     * Returns @c true if the respective native C/C++ object, member or variable
+     * (this DataType instance is reflecting) is a primitive, fundamental C/C++
+     * data type. Those are fundamental data types which are already predefined
+     * by the C/C++ language, for example: @c char, @c int, @c float, @c double,
+     * @c bool, but also @b any pointer types like @c int*, @c double**, but
+     * including pointers to user defined types like:
+     * @code
+     * struct Foo {
+     *     int  a;
+     *     bool b;
+     * };
+     * Foo* pFoo;
+     * @endcode
+     * So the DataType object of @c pFoo in the latter example would also return
+     * @c true for isPrimitive() here!
+     *
+     * @see isPointer()
+     */
     bool DataType::isPrimitive() const {
         return !isClass();
     }
 
+    /** @brief Whether this is an integer C/C++ data type.
+     *
+     * Returns @c true if the respective native C/C++ object, member or variable
+     * (this DataType instance is reflecting) is a (fundamental, primitive)
+     * integer data type. So these are all @c int and @c unsigned @c int types
+     * of any size. It does not include floating point ("real") types though.
+     *
+     * You may use isSigned() to further check whether this data type allows
+     * negative numbers.
+     *
+     * Note that this method also returns @c true on integer pointer types!
+     *
+     * @see isPointer()
+     */
     bool DataType::isInteger() const {
         return m_baseTypeName.substr(0, 3) == "int" ||
                m_baseTypeName.substr(0, 4) == "uint";
     }
 
+    /** @brief Whether this is a floating point based C/C++ data type.
+     *
+     * Returns @c true if the respective native C/C++ object, member or variable
+     * (this DataType instance is reflecting) is a (fundamental, primitive)
+     * floating point based data type. So these are currently the C/C++ @c float
+     * and @c double types. It does not include integer types though.
+     *
+     * Note that this method also returns @c true on @c float pointer and
+     * @c double pointer types!
+     *
+     * @see isPointer()
+     */
     bool DataType::isReal() const {
         return m_baseTypeName.substr(0, 4) == "real";
     }
 
+    /** @brief Whether this is a boolean C/C++ data type.
+     *
+     * Returns @c true if the respective native C/C++ object, member or variable
+     * (this DataType instance is reflecting) is a (fundamental, primitive)
+     * boolean data type. So this is the case for the C++ @c bool data type.
+     * It does not include integer or floating point types though.
+     *
+     * Note that this method also returns @c true on @c bool pointer types!
+     *
+     * @see isPointer()
+     */
     bool DataType::isBool() const {
         return m_baseTypeName == "bool";
     }
 
+    /** @brief Whether this is a C/C++ @c enum data type.
+     *
+     * Returns @c true if the respective native C/C++ object, member or variable
+     * (this DataType instance is reflecting) is a user defined enumeration
+     * data type. So this is the case for all C/C++ @c enum data types.
+     * It does not include integer (or even floating point) types though.
+     *
+     * Note that this method also returns @c true on @c enum pointer types!
+     *
+     * @see isPointer()
+     */
     bool DataType::isEnum() const {
         return m_baseTypeName == "enum";
     }
 
+    /** @brief Whether this is a signed integer C/C++ data type.
+     *
+     * Returns @c true if the respective native C/C++ object, member or variable
+     * (this DataType instance is reflecting) is a (fundamental, primitive)
+     * signed integer data type. This is the case for are all @c unsigned
+     * @c int C/C++ types of any size. For all floating point ("real") based 
+     * types this method returns @c false though!
+     *
+     * Note that this method also returns @c true on signed integer pointer
+     * types!
+     *
+     * @see isInteger();
+     */
     bool DataType::isSigned() const {
         return m_baseTypeName.substr(0, 3) == "int" ||
                isReal();
     }
 
+    /** @brief Comparison for equalness.
+     *
+     * Returns @c true if the two DataType objects being compared can be
+     * considered to be "equal" C/C++ data types. They are considered to be
+     * equal if their underlying C/C++ data types are exactly identical. For
+     * example comparing @c int and @c unsigned int data types are considere to
+     * be @b not equal, since they are differently signed. Furthermore @c short
+     * @c int and @c long @c int would also not be considered to be equal, since
+     * they do have a different memory size. Additionally pointer type
+     * characteristic is compared as well. So a @c double type and @c double*
+     * type are also considered to be not equal data types and hence this method
+     * would return @c false.
+     */
     bool DataType::operator==(const DataType& other) const {
         return m_baseTypeName   == other.m_baseTypeName &&
                m_customTypeName == other.m_customTypeName &&
@@ -109,10 +258,26 @@ namespace Serialization {
                m_isPointer      == other.m_isPointer;
     }
 
+    /** @brief Comparison for inequalness.
+     *
+     * Returns the inverse result of what DataType::operator==() would return.
+     * So refer to the latter for more details.
+     */
     bool DataType::operator!=(const DataType& other) const {
         return !operator==(other);
     }
 
+    /** @brief Smaller than comparison.
+     *
+     * Returns @c true if this DataType object can be consider to be "smaller"
+     * than the @a other DataType object being compared with. This operator
+     * is actually quite arbitrarily implemented and may change at any time,
+     * and thus result for the same data types may change in future at any time.
+     *
+     * This operator is basically implemented for allowing this DataType class
+     * to be used with various standard template library (STL) classes, which
+     * require sorting operators to be implemented.
+     */
     bool DataType::operator<(const DataType& other) const {
         return m_baseTypeName  < other.m_baseTypeName ||
               (m_baseTypeName == other.m_baseTypeName &&
@@ -123,10 +288,35 @@ namespace Serialization {
                m_isPointer < other.m_isPointer)));
     }
 
+    /** @brief Greater than comparison.
+     *
+     * Returns @c true if this DataType object can be consider to be "greater"
+     * than the @a other DataType object being compared with. This operator
+     * is actually quite arbitrarily implemented and may change at any time,
+     * and thus result for the same data types may change in future at any time.
+     *
+     * This operator is basically implemented for allowing this DataType class
+     * to be used with various standard template library (STL) classes, which
+     * require sorting operators to be implemented.
+     */
     bool DataType::operator>(const DataType& other) const {
         return !(operator==(other) || operator<(other));
     }
 
+    /** @brief Human readable long description for this data type.
+     *
+     * Returns a human readable long description for this data type, designed
+     * for the purpose for being displayed to the user. Note that the
+     * implementation for this method and thus the precise textual strings
+     * returned by this method, may change at any time. So you should not rely
+     * on precise strings for certain data types, and you should not use the
+     * return values of this method for comparing data types with each other.
+     *
+     * This class implements various comparison operators, so you should use 
+     * them for comparing DataTypes objects instead.
+     *
+     * @see baseTypeName(), customTypeName()
+     */
     String DataType::asLongDescr() const {
         String s = m_baseTypeName;
         if (!m_customTypeName.empty())
@@ -136,6 +326,72 @@ namespace Serialization {
         return s;
     }
 
+    /** @brief The base type name of this data type.
+     *
+     * Returns a textual short string identifying the basic type of name of this
+     * data type. For example for a 32 bit signed integer data type this method
+     * would return @c "int32". For all user defined C/C++ @c enum types this
+     * method would return "enum". For all user defined C/C++ @c struct @b and
+     * @c class types this method would return "class" for both. Note that the
+     * precise user defined type name (of i.e. @c enum, @c struct and @c class
+     * types) is not included in the string returned by this method, use
+     * customTypeName() to retrieve that information instead.
+     *
+     * The precise textual strings returned by this method are guaranteed to
+     * retain equal with future versions of this framework. So you can rely on
+     * them for using the return values of this method for comparison tasks in
+     * your application. Note however that this class also implements various
+     * comparison operators.
+     *
+     * Further it is important to know that this method returns the same string
+     * for pointers and non-pointers of the same underlying data type. So in the
+     * following example:
+     * @code
+     * #include <stdint.h>
+     * uint64_t i;
+     * uint64_t* pi;
+     * @endcode
+     * this method would return for both @c i and @c pi the string @c "uint64" !
+     *
+     * @see isPointer(), customTypeName()
+     */
+    String DataType::baseTypeName() const {
+        return m_baseTypeName;
+    }
+
+    /** @brief The user defined C/C++ data type name of this data type.
+     *
+     * Call this method on user defined C/C++ data types like @c enum, @c struct
+     * and @c class types to retrieve the user defined type name portion of
+     * those data types. Note that this method is only intended for such user
+     * defined data types. For all fundamental, primitive data types (like i.e.
+     * @c int) this method returns an empty string instead.
+     *
+     * This method takes an optional boolean argument @b demangle, which allows
+     * you define whether you are interested in the raw C++ type name or rather
+     * the demangled custom type name. By default this method returns the raw
+     * C++ type name. The raw C++ type name is the one that is actually used
+     * in the compiled binaries and should be preferred for comparions tasks.
+     * The demangled C++ type name is a human readable representation of the
+     * type name instead, which you may use for displaying the user defined type
+     * name portion to the user, however you should not use the demangled
+     * representation for comparison tasks.
+     *
+     * Note that in the following example:
+     * @code
+     * struct Foo {
+     *     int  a;
+     *     bool b;
+     * };
+     * Foo foo;
+     * Foo* pFoo;
+     * @endcode
+     * this method would return the same string for both @c foo and @c pFoo !
+     * In the latter example @c customTypeName(true) would return for both
+     * @c foo and @c pFoo the string @c "Foo" as return value of this method.
+     *
+     * @see isPointer(), baseTypeName()
+     */
     String DataType::customTypeName(bool demangle) const {
         if (!demangle) return m_customTypeName;
         int status;
@@ -147,6 +403,18 @@ namespace Serialization {
     // *************** Member ***************
     // *
 
+    /** @brief Default constructor.
+     *
+     * Initializes a Member object as being an "invalid" Member object.
+     * Thus calling isValid(), after creating a Member object with this
+     * constructor, would return @c false.
+     *
+     * You are currently not supposed to create (meaningful) Member objects on
+     * your own. This framework automatically create such Member objects for
+     * you instead.
+     *
+     * @see Object::members()
+     */
     Member::Member() {
         m_uid = NO_UID;
         m_offset = 0;
@@ -159,10 +427,114 @@ namespace Serialization {
         m_type = type;
     }
 
+    /** @brief Unique identifier of this member instance.
+     *
+     * Returns the unique identifier of the original C/C++ member instance of
+     * your C++ class. It is important to know that this unique identifier is
+     * not generated particularly for Member objects. That means no matter how
+     * many individual Member objects are created, as long as they are
+     * representing the same member variable of the same original native
+     * instance of your C++ class, then all those separately created Member
+     * objects return the same unique identifier here.
+     *
+     * @see UID for more details
+     */
+    UID Member::uid() const {
+        return m_uid;
+    }
+
+    /** @brief Name of the member.
+     *
+     * Returns the name of the native C/C++ member variable as originally typed
+     * in its C++ source code. So in the following example:
+     * @code
+     * struct Foo {
+     *     int  a;
+     *     bool b;
+     *     double someValue;
+     * };
+     * @endcode
+     * this method would usually return @c "a" for the first member of object
+     * instances of your native C/C++ @c struct @c Foo, and this method would
+     * usually return @c "someValue" for its third member.
+     *
+     * Note that when you implement the @c serialize() method of your own C/C++
+     * clases or strucs, you are able to override defining the precise name of
+     * your members. In that case this method would of course return the member
+     * names as explicitly forced by you instead.
+     */
+    String Member::name() const {
+        return m_name;
+    }
+
+    /** @brief Offset of member in its containing parent data structure.
+     *
+     * Returns the offset of this member (in bytes) within its containing parent
+     * user defined data structure or class. So in the following example:
+     * @code
+     * #include <stdint.h>
+     * struct Foo __attribute__ ((__packed__)) {
+     *     int32_t a;
+     *     bool b;
+     *     double c;
+     * };
+     * @endcode
+     * this method would typically return @c 0 for member @c a, @c 4 for member
+     * @c b and @c 5 for member @c c. As you have noted in the latter example,
+     * the structure @c Foo was declared to have "packed" data members. That
+     * means the compiler is instructed to add no memory spaces between the
+     * individual members. Because by default the compiler might add memory
+     * spaces between individual members to align them on certain memory address
+     * boundaries for increasing runtime performance while accessing the
+     * members. So if you declared the previous example without the "packed"
+     * attribute like:
+     * @code
+     * #include <stdint.h>
+     * struct Foo {
+     *     int32_t a;
+     *     bool b;
+     *     double c;
+     * };
+     * @endcode
+     * then this method would usually return a different offset for members
+     * @c b and @c c instead. For most 64 bit architectures this example would
+     * now still return @c 0 for member @c a, but @c 8 for member @c b and @c 16
+     * for member @c c.
+     */
+    size_t Member::offset() const {
+        return m_offset;
+    }
+
+    /** @brief C/C++ Data type of this member.
+     *
+     * Returns the precise data type of the original native C/C++ member.
+     */
+    const DataType& Member::type() const {
+        return m_type;
+    }
+
+    /** @brief Check if this is a valid Member object.
+     *
+     * Returns @c true if this Member object is reflecting a "valid" member
+     * object. The default constructor creates Member objects initialized to be
+     * "invalid" Member objects by default. That way one can detect whether
+     * a Member object was ever assigned to something meaningful.
+     *
+     * Note that this class also implements the @c bool operator, both return
+     * the same boolean result value.
+     */
     bool Member::isValid() const {
         return m_uid && !m_name.empty() && m_type;
     }
 
+    /** @brief Comparison for equalness.
+     *
+     * Returns @c true if the two Member objects being compared can be
+     * considered to be "equal" C/C++ members. They are considered to be
+     * equal if their data type, member name, their offset within their parent
+     * containing C/C++ data structure, as well as their original native C/C++
+     * instance were exactly identical.
+     */
     bool Member::operator==(const Member& other) const {
         return m_uid    == other.m_uid &&
                m_offset == other.m_offset &&
@@ -170,10 +542,27 @@ namespace Serialization {
                m_type   == other.m_type;
     }
 
+    /** @brief Comparison for inequalness.
+     *
+     * Returns the inverse result of what Member::operator==() would return.
+     * So refer to the latter for more details.
+     */
     bool Member::operator!=(const Member& other) const {
         return !operator==(other);
     }
 
+    /** @brief Smaller than comparison.
+     *
+     * Returns @c true if this Member object can be consider to be "smaller"
+     * than the @a other Member object being compared with. This operator
+     * is actually quite arbitrarily implemented and may change at any time,
+     * and thus result for the same member representations may change in
+     * future at any time.
+     *
+     * This operator is basically implemented for allowing this DataType class
+     * to be used with various standard template library (STL) classes, which
+     * require sorting operators to be implemented.
+     */
     bool Member::operator<(const Member& other) const {
         return m_uid  < other.m_uid ||
               (m_uid == other.m_uid &&
@@ -184,6 +573,18 @@ namespace Serialization {
                m_type < other.m_type)));
     }
 
+    /** @brief Greater than comparison.
+     *
+     * Returns @c true if this Member object can be consider to be "greater"
+     * than the @a other Member object being compared with. This operator
+     * is actually quite arbitrarily implemented and may change at any time,
+     * and thus result for the same member representations may change in
+     * future at any time.
+     *
+     * This operator is basically implemented for allowing this DataType class
+     * to be used with various standard template library (STL) classes, which
+     * require sorting operators to be implemented.
+     */
     bool Member::operator>(const Member& other) const {
         return !(operator==(other) || operator<(other));
     }
@@ -191,11 +592,39 @@ namespace Serialization {
     // *************** Object ***************
     // *
 
+    /** @brief Default constructor (for an "invalid" Object).
+     *
+     * Initializes an Object instance as being an "invalid" Object.
+     * Thus calling isValid(), after creating an Object instance with this
+     * constructor, would return @c false.
+     *
+     * Usually you are not supposed to create (meaningful) Object instances on
+     * your own. They are typically constructed by the Archive class for you.
+     *
+     * @see Archive::rootObject(), Archive::objectByUID()
+     */
     Object::Object() {
         m_version = 0;
         m_minVersion = 0;
     }
 
+    /** @brief Constructor for a "meaningful" Object.
+     *
+     * Initializes a "meaningful" Object instance as being. Thus calling
+     * isValid(), after creating an Object instance with this constructor,
+     * should return @c true, provided that the arguments passed to this
+     * constructor construe a valid object representation.
+     *
+     * Usually you are not supposed to create (meaningful) Object instances on
+     * your own. They are typically constructed by the Archive class for you.
+     *
+     * @see Archive::rootObject(), Archive::objectByUID()
+     *
+     * @param uidChain - unique identifier chain of the object to be constructed
+     * @param type - C/C++ data type of the actual native object this abstract
+     *               Object instance should reflect after calling this
+     *               constructor
+     */
     Object::Object(UIDChain uidChain, DataType type) {
         m_type = type;
         m_uid  = uidChain;
@@ -204,10 +633,164 @@ namespace Serialization {
         //m_data.resize(type.size());
     }
 
+    /** @brief Check if this is a valid Object instance.
+     *
+     * Returns @c true if this Object instance is reflecting a "valid" Object.
+     * The default constructor creates Object instances initialized to be
+     * "invalid" Objects by default. That way one can detect whether an Object
+     * instance was ever assigned to something meaningful.
+     *
+     * Note that this class also implements the @c bool operator, both return
+     * the same boolean result value.
+     */
     bool Object::isValid() const {
         return m_type && !m_uid.empty();
     }
 
+    /** @brief Unique identifier of this Object.
+     *
+     * Returns the unique identifier for the original native C/C++ data this
+     * abstract Object instance is reflecting. If this Object is representing
+     * a C/C++ pointer (of first degree) then @c uid() (or @c uid(0) ) returns
+     * the unique identifier of the pointer itself, whereas @c uid(1) returns
+     * the unique identifier of the original C/C++ data that pointer was
+     * actually pointing to.
+     *
+     * @see UIDChain for more details about this overall topic.
+     */
+    UID Object::uid(int index) const {
+        return (index < m_uid.size()) ? m_uid[index] : NO_UID;
+    }
+
+    /** @brief Unique identifier chain of this Object.
+     *
+     * Returns the entire unique identifier chain of this Object.
+     *
+     * @see uid() and UIDChain for more details about this overall topic.
+     */
+    const UIDChain& Object::uidChain() const {
+        return m_uid;
+    }
+
+    /** @brief C/C++ data type this Object is reflecting.
+     *
+     * Returns the precise original C/C++ data type of the original native
+     * C/C++ object or data this Object instance is reflecting.
+     */
+    const DataType& Object::type() const {
+        return m_type;
+    }
+
+    /** @brief Raw data of the original native C/C++ data.
+     *
+     * Returns the raw data value of the original C/C++ data this Object is
+     * reflecting. So the precise raw data value, layout and size is dependent
+     * to the precise C/C++ data type of the original native C/C++ data. However
+     * potentially required endian correction is already automatically applied
+     * for you. That means you can safely, directly C-cast the raw data returned
+     * by this method to the respective native C/C++ data type in order to
+     * access and use the value for some purpose, at least if the respective
+     * data is of any fundamental, primitive C/C++ data type, or also to a
+     * certain extent if the type is user defined @c enum type.
+     *
+     * However directly C-casting this raw data for user defined @c struct or
+     * @c class types is not possible. For those user defined data structures
+     * this method always returns empty raw data instead.
+     *
+     * Note however that there are more convenient methods in the Archive class
+     * to get the right value for the individual data types instead.
+     *
+     * @see Archive::valueAsInt(), Archive::valueAsReal(), Archive::valueAsBool(),
+     *      Archive::valueAsString()
+     */
+    const RawData& Object::rawData() const {
+        return m_data;
+    }
+
+    /** @brief Version of original user defined C/C++ @c struct or @c class.
+     *
+     * In case this Object is reflecting a native C/C++ @c struct or @c class
+     * type, then this method returns the version of that native C/C++ @c struct
+     * or @c class layout or implementation. For primitive, fundamental C/C++
+     * data types the return value of this method has no meaning.
+     *
+     * @see Archive::setVersion() for more details about this overall topic.
+     */
+    Version Object::version() const {
+        return m_version;
+    }
+
+    /** @brief Minimum version of original user defined C/C++ @c struct or @c class.
+     *
+     * In case this Object is reflecting a native C/C++ @c struct or @c class
+     * type, then this method returns the "minimum" version of that native C/C++
+     * @c struct or @c class layout or implementation which it may be compatible
+     * with. For primitive, fundamental C/C++ data types the return value of
+     * this method has no meaning.
+     *
+     * @see Archive::setVersion() and Archive::setMinVersion() for more details
+     *      about this overall topic.
+     */
+    Version Object::minVersion() const {
+        return m_minVersion;
+    }
+
+    /** @brief All members of the original native C/C++ @c struct or @c class instance.
+     *
+     * In case this Object is reflecting a native C/C++ @c struct or @c class
+     * type, then this method returns all member variables of that original
+     * native C/C++ @c struct or @c class instance. For primitive, fundamental
+     * C/C++ data types this method returns an empty vector instead.
+     *
+     * Example:
+     * @code
+     * struct Foo {
+     *     int  a;
+     *     bool b;
+     *     double someValue;
+     * };
+     * @endcode
+     * Considering above's C++ code, a serialized Object representation of such
+     * a native @c Foo class would have 3 members @c a, @c b and @c someValue.
+     *
+     * Note that the respective serialize() method implementation of that
+     * fictional C++ @c struct @c Foo actually defines which members are going
+     * to be serialized and deserialized for instances of class @c Foo. So in
+     * practice the members returned by method members() here might return a
+     * different set of members as actually defined in the original C/C++ struct
+     * header declaration.
+     *
+     * The precise sequence of the members returned by this method here depends
+     * on the actual serialize() implementation of the user defined C/C++
+     * @c struct or @c class.
+     *
+     * @see Object::sequenceIndexOf() for more details about the precise order
+     *      of members returned by this method in the same way.
+     */
+    std::vector<Member>& Object::members() {
+        return m_members;
+    }
+
+    /** @brief All members of the original native C/C++ @c struct or @c class instance (read only).
+     *
+     * Returns the same result as overridden members() method above, it just
+     * returns a read-only result instead. See above's method description for
+     * details for the return value of this method instead.
+     */
+    const std::vector<Member>& Object::members() const {
+        return m_members;
+    }
+
+    /** @brief Comparison for equalness.
+     *
+     * Returns @c true if the two Object instances being compared can be
+     * considered to be "equal" native C/C++ object instances. They are
+     * considered to be equal if they are representing the same original
+     * C/C++ data instance, which is essentially the case if the original
+     * reflecting native C/C++ data are sharing the same memory address and
+     * memory size (thus the exact same memory space) and originally had the
+     * exact same native C/C++ types.
+     */
     bool Object::operator==(const Object& other) const {
         // ignoring all other member variables here
         // (since UID stands for "unique" ;-) )
@@ -215,10 +798,27 @@ namespace Serialization {
                m_type == other.m_type;
     }
 
+    /** @brief Comparison for inequalness.
+     *
+     * Returns the inverse result of what Object::operator==() would return.
+     * So refer to the latter for more details.
+     */
     bool Object::operator!=(const Object& other) const {
         return !operator==(other);
     }
 
+    /** @brief Smaller than comparison.
+     *
+     * Returns @c true if this Object instance can be consider to be "smaller"
+     * than the @a other Object instance being compared with. This operator
+     * is actually quite arbitrarily implemented and may change at any time,
+     * and thus result for the same Object representations may change in future
+     * at any time.
+     *
+     * This operator is basically implemented for allowing this DataType class
+     * to be used with various standard template library (STL) classes, which
+     * require sorting operators to be implemented.
+     */
     bool Object::operator<(const Object& other) const {
         // ignoring all other member variables here
         // (since UID stands for "unique" ;-) )
@@ -227,10 +827,40 @@ namespace Serialization {
                m_type < other.m_type);
     }
 
+    /** @brief Greater than comparison.
+     *
+     * Returns @c true if this Object instance can be consider to be "greater"
+     * than the @a other Object instance being compared with. This operator
+     * is actually quite arbitrarily implemented and may change at any time,
+     * and thus result for the same Object representations may change in future
+     * at any time.
+     *
+     * This operator is basically implemented for allowing this DataType class
+     * to be used with various standard template library (STL) classes, which
+     * require sorting operators to be implemented.
+     */
     bool Object::operator>(const Object& other) const {
         return !(operator==(other) || operator<(other));
     }
 
+    /** @brief Check version compatibility between Object instances.
+     *
+     * Use this method to check whether the two original C/C++ instances those
+     * two Objects are reflecting, were using a C/C++ data type which are version
+     * compatible with each other. By default all C/C++ Objects are considered
+     * to be version compatible. They might only be version incompatible if you
+     * enforced a certain backward compatibility constraint with your
+     * serialize() method implementation of your custom C/C++ @c struct or
+     * @c class types.
+     *
+     * You must only call this method on two Object instances which are
+     * representing the same data type, for example if both Objects reflect
+     * instances of the same user defined C++ class. Calling this method on
+     * completely different data types does not cause an error or exception, but
+     * its result would simply be useless for any purpose.
+     *
+     * @see Archive::setVersion() for more details about this overall topic.
+     */
     bool Object::isVersionCompatibleTo(const Object& other) const {
         if (this->version() == other.version())
             return true;
@@ -248,6 +878,35 @@ namespace Serialization {
         m_minVersion = v;
     }
 
+    /** @brief Get the member of this Object with given name.
+     *
+     * In case this Object is reflecting a native C/C++ @c struct or @c class
+     * type, then this method returns the abstract reflection of the requested
+     * member variable of the original native C/C++ @c struct or @c class
+     * instance. For primitive, fundamental C/C++ data types this method always
+     * returns an "invalid" Member instance instead.
+     *
+     * Example:
+     * @code
+     * struct Foo {
+     *     int  a;
+     *     bool b;
+     *     double someValue;
+     * };
+     * @endcode
+     * Consider that you serialized the native C/C++ @c struct as shown in this
+     * example, and assuming that you implemented the respective serialize()
+     * method of this C++ @c struct to serialize all its members, then you might
+     * call memberNamed("someValue") to get the details of the third member in
+     * this example for instance. In case the passed @a name is an unknown
+     * member name, then this method will return an "invalid" Member object
+     * instead.
+     *
+     * @param name - original name of the sought serialized member variable of
+     *               this Object reflection
+     * @returns abstract reflection of the sought member variable
+     * @see Member::isValid(), Object::members()
+     */
     Member Object::memberNamed(String name) const {
         for (int i = 0; i < m_members.size(); ++i)
             if (m_members[i].name() == name)
@@ -255,6 +914,20 @@ namespace Serialization {
         return Member();
     }
 
+    /** @brief Get the member of this Object with given unique identifier.
+     *
+     * This method behaves similar like method memberNamed() described above,
+     * but instead of searching for a member variable by name, it searches for
+     * a member with an abstract unique identifier instead. For primitive,
+     * fundamental C/C++ data types, for invalid or unknown unique identifiers,
+     * and for members which are actually not member instances of the original
+     * C/C++ @c struct or @c class instance this Object is reflecting, this
+     * method returns an "invalid" Member instance instead.
+     *
+     * @param uid - unique identifier of the member variable being sought
+     * @returns abstract reflection of the sought member variable
+     * @see Member::isValid(), Object::members(), Object::memberNamed()
+     */
     Member Object::memberByUID(const UID& uid) const {
         if (!uid) return Member();
         for (int i = 0; i < m_members.size(); ++i)
@@ -272,6 +945,21 @@ namespace Serialization {
         }
     }
 
+    /** @brief Get all members of this Object with given data type.
+     *
+     * In case this Object is reflecting a native C/C++ @c struct or @c class
+     * type, then this method returns all member variables of that original
+     * native C/C++ @c struct or @c class instance which are matching the given
+     * requested data @a type. If this Object is reflecting a primitive,
+     * fundamental data type, or if there are no members of this Object with the
+     * requested precise C/C++ data type, then this method returns an empty
+     * vector instead.
+     *
+     * @param type - the precise C/C++ data type of the sought member variables
+     *               of this Object
+     * @returns vector with abstract reflections of the sought member variables
+     * @see Object::members(), Object::memberNamed()
+     */
     std::vector<Member> Object::membersOfType(const DataType& type) const {
         std::vector<Member> v;
         for (int i = 0; i < m_members.size(); ++i) {
@@ -282,6 +970,37 @@ namespace Serialization {
         return v;
     }
 
+    /** @brief Serialization/deserialization sequence number of the requested member.
+     *
+     * Returns the precise serialization/deserialization sequence number of the
+     * requested @a member variable.
+     *
+     * Example:
+     * @code
+     * struct Foo {
+     *     int  a;
+     *     bool b;
+     *     double c;
+     *
+     *     void serialize(Serialization::Archive* archive);
+     * };
+     * @endcode
+     * Assuming the declaration of the user defined native C/C++ @c struct
+     * @c Foo above, and assuming the following implementation of serialize():
+     * @code
+     * #define SRLZ(member) \
+     *   archive->serializeMember(*this, member, #member);
+     *
+     * void Foo::serialize(Serialization::Archive* archive) {
+     *     SRLZ(c);
+     *     SRLZ(a);
+     *     SRLZ(b);
+     * }
+     * @endcode
+     * then @c sequenceIndexOf(obj.memberNamed("a")) returns 1,
+     * @c sequenceIndexOf(obj.memberNamed("b")) returns 2, and
+     * @c sequenceIndexOf(obj.memberNamed("c")) returns 0.
+     */
     int Object::sequenceIndexOf(const Member& member) const {
         for (int i = 0; i < m_members.size(); ++i)
             if (m_members[i] == member)
@@ -292,6 +1011,24 @@ namespace Serialization {
     // *************** Archive ***************
     // *
 
+    /** @brief Create an "empty" archive.
+     *
+     * This default constructor creates an "empty" archive which you then
+     * subsequently for example might fill with serialized data like:
+     * @code
+     * Archive a;
+     * a.serialize(&myRootObject);
+     * @endcode
+     * Or:
+     * @code
+     * Archive a;
+     * a << myRootObject;
+     * @endcode
+     * Or you might also subsequently assign an already existing non-empty
+     * to this empty archive, which effectively clones the other
+     * archive (deep copy) or call decode() later on to assign a previously
+     * serialized raw data stream.
+     */
     Archive::Archive() {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
@@ -299,6 +1036,21 @@ namespace Serialization {
         m_timeCreated = m_timeModified = LIBGIG_EPOCH_TIME;
     }
 
+    /** @brief Create and fill the archive with the given serialized raw data.
+     *
+     * This constructor decodes the given raw @a data and constructs a
+     * (non-empty) Archive object according to that given serialized data
+     * stream.
+     *
+     * After this constructor returned, you may then traverse the individual
+     * objects by starting with accessing the rootObject() for example. Finally
+     * you might call deserialize() to restore your native C++ objects with the
+     * content of this archive.
+     *
+     * @param data - the previously serialized raw data stream to be decoded
+     * @throws Exception if the provided raw @a data uses an invalid, unknown,
+     *         incompatible or corrupt data stream or format.
+     */
     Archive::Archive(const RawData& data) {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
@@ -307,6 +1059,26 @@ namespace Serialization {
         decode(m_rawData);
     }
 
+    /** @brief Create and fill the archive with the given serialized raw C-buffer data.
+     *
+     * This constructor essentially works like the constructor above, but just
+     * uses another data type for the serialized raw data stream being passed to
+     * this class.
+     *
+     * This constructor decodes the given raw @a data and constructs a
+     * (non-empty) Archive object according to that given serialized data
+     * stream.
+     *
+     * After this constructor returned, you may then traverse the individual
+     * objects by starting with accessing the rootObject() for example. Finally
+     * you might call deserialize() to restore your native C++ objects with the
+     * content of this archive.
+     *
+     * @param data - the previously serialized raw data stream to be decoded
+     * @param size - size of @a data in bytes
+     * @throws Exception if the provided raw @a data uses an invalid, unknown,
+     *         incompatible or corrupt data stream or format.
+     */
     Archive::Archive(const uint8_t* data, size_t size) {
         m_operation = OPERATION_NONE;
         m_root = NO_UID;
@@ -318,6 +1090,16 @@ namespace Serialization {
     Archive::~Archive() {
     }
 
+    /** @brief Root C++ object of this archive.
+     *
+     * In case this is a non-empty Archive, then this method returns the so
+     * called "root" C++ object. If this is an empty archive, then this method
+     * returns an "invalid" Object instance instead.
+     *
+     * @see Archive::serialize() for more details about the "root" object concept.
+     * @see Object for more details about the overall object reflection concept.
+     * @returns reflection of the original native C++ root object
+     */
     Object& Archive::rootObject() {
         return m_allObjects[m_root];
     }
@@ -809,6 +1591,21 @@ namespace Serialization {
         m_timeModified = _popTimeBlob(p, end);
     }
 
+    /** @brief Fill this archive with the given serialized raw data.
+     *
+     * Calling this method will decode the given raw @a data and constructs a
+     * (non-empty) Archive object according to that given serialized @a data
+     * stream.
+     *
+     * After this method returned, you may then traverse the individual
+     * objects by starting with accessing the rootObject() for example. Finally
+     * you might call deserialize() to restore your native C++ objects with the
+     * content of this archive.
+     *
+     * @param data - the previously serialized raw data stream to be decoded
+     * @throws Exception if the provided raw @a data uses an invalid, unknown,
+     *         incompatible or corrupt data stream or format.
+     */
     void Archive::decode(const RawData& data) {
         m_rawData = data;
         m_allObjects.clear();
@@ -822,6 +1619,26 @@ namespace Serialization {
         _popRootBlob(p, end);
     }
 
+    /** @brief Fill this archive with the given serialized raw C-buffer data.
+     *
+     * This method essentially works like the decode() method above, but just
+     * uses another data type for the serialized raw data stream being passed to
+     * this method.
+     *
+     * Calling this method will decode the given raw @a data and constructs a
+     * (non-empty) Archive object according to that given serialized @a data
+     * stream.
+     *
+     * After this method returned, you may then traverse the individual
+     * objects by starting with accessing the rootObject() for example. Finally
+     * you might call deserialize() to restore your native C++ objects with the
+     * content of this archive.
+     *
+     * @param data - the previously serialized raw data stream to be decoded
+     * @param size - size of @a data in bytes
+     * @throws Exception if the provided raw @a data uses an invalid, unknown,
+     *         incompatible or corrupt data stream or format.
+     */
     void Archive::decode(const uint8_t* data, size_t size) {
         RawData rawData;
         rawData.resize(size);
@@ -829,19 +1646,58 @@ namespace Serialization {
         decode(rawData);
     }
 
+    /** @brief Raw data stream of this archive content.
+     *
+     * Call this method to get a raw data stream for the current content of this
+     * archive, which you may use to i.e. store on disk or send vie network to
+     * another machine for deserializing there. This method only returns a
+     * meaningful content if this is a non-empty archive, that is if you either
+     * serialized with this Archive object or decoded a raw data stream to this
+     * Archive object before. If this is an empty archive instead, then this
+     * method simply returns an empty raw data stream (of size 0) instead.
+     *
+     * Note that whenever you call this method, the "modified" state of this 
+     * archive will be reset to @c false.
+     *
+     * @see isModified()
+     */
     const RawData& Archive::rawData() {
         if (m_isModified) encode();
         return m_rawData;
     }
 
+    /** @brief Name of the encoding format used by this Archive class.
+     *
+     * This method returns the name of the encoding format used to encode
+     * serialized raw data streams.
+     */
     String Archive::rawDataFormat() const {
         return MAGIC_START;
     }
 
+    /** @brief Whether this archive was modified.
+     *
+     * This method returns the current "modified" state of this archive. When
+     * either decoding a previously serialized raw data stream or after
+     * serializing native C++ objects to this archive the modified state will
+     * initially be set to @c false. However whenever you are modifying the
+     * abstract data model of this archive afterwards, for example by removing
+     * objects from this archive by calling remove() or removeMember(), or by
+     * altering object values for example by calling setIntValue(), then the
+     * "modified" state of this archive will automatically be set to @c true.
+     *
+     * You can reset the "modified" state explicitly at any time, by calling
+     * rawData().
+     */
     bool Archive::isModified() const {
         return m_isModified;
     }
 
+    /** @brief Clear content of this archive.
+     *
+     * Drops the entire content of this archive and thus resets this archive
+     * back to become an empty archive.
+     */
     void Archive::clear() {
         m_allObjects.clear();
         m_operation = OPERATION_NONE;
@@ -851,20 +1707,52 @@ namespace Serialization {
         m_timeCreated = m_timeModified = LIBGIG_EPOCH_TIME;
     }
 
+    /** @brief Optional name of this archive.
+     *
+     * Returns the optional name of this archive that you might have assigned
+     * to this archive before by calling setName(). If you haven't assigned any
+     * name to this archive before, then this method simply returns an empty
+     * string instead.
+     */
     String Archive::name() const {
         return m_name;
     }
 
+    /** @brief Assign a name to this archive.
+     *
+     * You may optionally assign an arbitrary name to this archive. The name
+     * will be stored along with the archive, that is it will encoded with the
+     * resulting raw data stream, and accordingly it will be decoded from the
+     * raw data stream later on.
+     *
+     * @param name - arbitrary new name for this archive
+     */
     void Archive::setName(String name) {
         if (m_name == name) return;
         m_name = name;
         m_isModified = true;
     }
 
+    /** @brief Optional comments for this archive.
+     *
+     * Returns the optional comments for this archive that you might have
+     * assigned to this archive before by calling setComment(). If you haven't
+     * assigned any comment to this archive before, then this method simply
+     * returns an empty string instead.
+     */
     String Archive::comment() const {
         return m_comment;
     }
 
+    /** @brief Assign a comment to this archive.
+     *
+     * You may optionally assign arbitrary comments to this archive. The comment
+     * will be stored along with the archive, that is it will encoded with the
+     * resulting raw data stream, and accordingly it will be decoded from the
+     * raw data stream later on.
+     *
+     * @param comment - arbitrary new comment for this archive
+     */
     void Archive::setComment(String comment) {
         if (m_comment == comment) return;
         m_comment = comment;
@@ -888,27 +1776,89 @@ namespace Serialization {
         return *pTm;
     }
 
+    /** @brief Date and time when this archive was initially created.
+     *
+     * Returns a UTC time stamp (date and time) when this archive was initially
+     * created.
+     */
     time_t Archive::timeStampCreated() const {
         return m_timeCreated;
     }
 
+    /** @brief Date and time when this archive was modified for the last time.
+     *
+     * Returns a UTC time stamp (date and time) when this archive was modified
+     * for the last time.
+     */
     time_t Archive::timeStampModified() const {
         return m_timeModified;
     }
 
+    /** @brief Date and time when this archive was initially created.
+     *
+     * Returns a calendar time information representing the date and time when
+     * this archive was initially created. The optional @a base parameter may
+     * be used to define to which time zone the returned data and time shall be
+     * related to.
+     *
+     * @param base - (optional) time zone the result shall relate to, by default
+     *               UTC time (Greenwhich Mean Time) is assumed instead
+     */
     tm Archive::dateTimeCreated(time_base_t base) const {
         return _convertTimeStamp(m_timeCreated, base);
     }
 
+    /** @brief Date and time when this archive was modified for the last time.
+     *
+     * Returns a calendar time information representing the date and time when
+     * this archive has been modified for the last time. The optional @a base
+     * parameter may be used to define to which time zone the returned date and
+     * time shall be related to.
+     *
+     * @param base - (optional) time zone the result shall relate to, by default
+     *               UTC time (Greenwhich Mean Time) is assumed instead
+     */
     tm Archive::dateTimeModified(time_base_t base) const {
         return _convertTimeStamp(m_timeModified, base);
     }
 
+    /** @brief Remove a member variable from the given object.
+     *
+     * Removes the member variable @a member from its containing object
+     * @a parent and sets the modified state of this archive to @c true.
+     * If the given @a parent object does not contain the given @a member then
+     * this method does nothing.
+     *
+     * This method provides a means of "partial" deserialization. By removing
+     * either objects or members from this archive before calling deserialize(),
+     * only the remaining objects and remaining members will be restored by this
+     * framework, all other data of your C++ classes remain untouched.
+     *
+     * @param parent - Object which contains @a member
+     * @param member - member to be removed
+     * @see isModified() for details about the modified state.
+     * @see Object for more details about the overall object reflection concept.
+     */
     void Archive::removeMember(Object& parent, const Member& member) {
         parent.remove(member);
         m_isModified = true;
     }
 
+    /** @brief Remove an object from this archive.
+     *
+     * Removes the object @obj from this archive and sets the modified state of
+     * this archive to @c true. If the passed object is either invalid, or does
+     * not exist in this archive, then this method does nothing.
+     *
+     * This method provides a means of "partial" deserialization. By removing
+     * either objects or members from this archive before calling deserialize(),
+     * only the remaining objects and remaining members will be restored by this
+     * framework, all other data of your C++ classes remain untouched.
+     *
+     * @param obj - the object to be removed from this archive
+     * @see isModified() for details about the modified state.
+     * @see Object for more details about the overall object reflection concept.
+     */
     void Archive::remove(const Object& obj) {
         //FIXME: Should traverse from root object and remove all members associated with this object
         if (!obj.uid()) return;
@@ -916,22 +1866,61 @@ namespace Serialization {
         m_isModified = true;
     }
 
+    /** @brief Access object by its unique identifier.
+     *
+     * Returns the object of this archive with the given unique identifier
+     * @a uid. If the given @a uid is invalid, or if this archive does not
+     * contain an object with the given unique identifier, then this method
+     * returns an invalid object instead.
+     *
+     * @param uid - unique identifier of sought object
+     * @see Object for more details about the overall object reflection concept.
+     * @see Object::isValid() for valid/invalid objects
+     */
     Object& Archive::objectByUID(const UID& uid) {
         return m_allObjects[uid];
     }
 
+    /** @brief Set the current version for the given object.
+     *
+     * Essentially behaves like above's setVersion() method, it just uses the
+     * abstract reflection data type instead for the respective @a object being
+     * passed to this method. Refer to above's setVersion() documentation about
+     * the precise behavior details of setVersion().
+     *
+     * @param object - object to set the current version for
+     * @param v - new current version to set for @a object
+     */
     void Archive::setVersion(Object& object, Version v) {
         if (!object) return;
         object.setVersion(v);
         m_isModified = true;
     }
 
+    /** @brief Set the minimum version for the given object.
+     *
+     * Essentially behaves like above's setMinVersion() method, it just uses the
+     * abstract reflection data type instead for the respective @a object being
+     * passed to this method. Refer to above's setMinVersion() documentation
+     * about the precise behavior details of setMinVersion().
+     *
+     * @param object - object to set the minimum version for
+     * @param v - new minimum version to set for @a object
+     */
     void Archive::setMinVersion(Object& object, Version v) {
         if (!object) return;
         object.setMinVersion(v);
         m_isModified = true;
     }
 
+    /** @brief Set new value for given @c enum object.
+     *
+     * Sets the new @a value to the given @c enum @a object.
+     *
+     * @param object - the @c enum object to be changed
+     * @param value - the new value to be assigned to the @a object
+     * @throws Exception if @a object is not an @c enum type.
+     */
     void Archive::setEnumValue(Object& object, uint64_t value) {
         if (!object) return;
         if (!object.type().isEnum())
@@ -964,6 +1953,16 @@ namespace Serialization {
         m_isModified = true;
     }
 
+    /** @brief Set new integer value for given integer object.
+     *
+     * Sets the new integer @a value to the given integer @a object. Currently
+     * this framework handles any integer data type up to 64 bit. For larger
+     * integer types an assertion failure will be raised.
+     *
+     * @param object - the integer object to be changed
+     * @param value - the new value to be assigned to the @a object
+     * @throws Exception if @a object is not an integer type.
+     */
     void Archive::setIntValue(Object& object, int64_t value) {
         if (!object) return;
         if (!object.type().isInteger())
@@ -1003,6 +2002,17 @@ namespace Serialization {
         m_isModified = true;
     }
 
+    /** @brief Set new floating point value for given floating point object.
+     *
+     * Sets the new floating point @a value to the given floating point
+     * @a object. Currently this framework supports single precision @c float
+     * and double precision @c double floating point data types. For all other
+     * floating point types this method will raise an assertion failure.
+     *
+     * @param object - the floating point object to be changed
+     * @param value - the new value to be assigned to the @a object
+     * @throws Exception if @a object is not a floating point based type.
+     */
     void Archive::setRealValue(Object& object, double value) {
         if (!object) return;
         if (!object.type().isReal())
@@ -1025,6 +2035,14 @@ namespace Serialization {
         m_isModified = true;
     }
 
+    /** @brief Set new boolean value for given boolean object.
+     *
+     * Sets the new boolean @a value to the given boolean @a object.
+     *
+     * @param object - the boolean object to be changed
+     * @param value - the new value to be assigned to the @a object
+     * @throws Exception if @a object is not a boolean type.
+     */
     void Archive::setBoolValue(Object& object, bool value) {
         if (!object) return;
         if (!object.type().isBool())
@@ -1042,6 +2060,19 @@ namespace Serialization {
         m_isModified = true;
     }
 
+    /** @brief Automatically cast and assign appropriate value to object.
+     *
+     * This method automatically converts the given @a value from textual string
+     * representation into the appropriate data format of the requested
+     * @a object. So this method is a convenient way to change values of objects
+     * in this archive with your applications in automated way, i.e. for
+     * implementing an editor where the user is able to edit values of objects
+     * in this archive by entering the values as text with a keyboard.
+     *
+     * @throws Exception if the passed @a object is not a fundamental, primitive
+     *         data type or if the provided textual value cannot be converted
+     *         into an appropriate value for the requested object.
+     */
     void Archive::setAutoValue(Object& object, String value) {
         if (!object) return;
         const DataType& type = object.type();
@@ -1057,6 +2088,15 @@ namespace Serialization {
             throw Exception("Not a primitive data type");
     }
 
+    /** @brief Get value of object as string.
+     *
+     * Converts the current value of the given @a object into a textual string
+     * and returns that string.
+     *
+     * @param object - object whose value shall be retrieved
+     * @throws Exception if the given object is either invalid, or if the object
+     *         is not a fundamental, primitive data type.
+     */
     String Archive::valueAsString(const Object& object) {
         if (!object)
             throw Exception("Invalid object");
@@ -1071,6 +2111,15 @@ namespace Serialization {
         return _primitiveObjectValueToString(*pObject);
     }
 
+    /** @brief Get integer value of object.
+     *
+     * Returns the current integer value of the requested integer @a object or
+     * @c enum object.
+     *
+     * @param object - object whose value shall be retrieved
+     * @throws Exception if the given object is either invalid, or if the object
+     *         is neither an integer nor @c enum data type.
+     */
     int64_t Archive::valueAsInt(const Object& object) {
         if (!object)
             throw Exception("Invalid object");
@@ -1085,6 +2134,15 @@ namespace Serialization {
         return _primitiveObjectValueToNumber<int64_t>(*pObject);
     }
 
+    /** @brief Get floating point value of object.
+     *
+     * Returns the current floating point value of the requested floating point
+     * @a object.
+     *
+     * @param object - object whose value shall be retrieved
+     * @throws Exception if the given object is either invalid, or if the object
+     *         is not a floating point based type.
+     */
     double Archive::valueAsReal(const Object& object) {
         if (!object)
             throw Exception("Invalid object");
@@ -1099,6 +2157,14 @@ namespace Serialization {
         return _primitiveObjectValueToNumber<double>(*pObject);
     }
 
+    /** @brief Get boolean value of object.
+     *
+     * Returns the current boolean value of the requested boolean @a object.
+     *
+     * @param object - object whose value shall be retrieved
+     * @throws Exception if the given object is either invalid, or if the object
+     *         is not a boolean data type.
+     */
     bool Archive::valueAsBool(const Object& object) {
         if (!object)
             throw Exception("Invalid object");
@@ -1212,6 +2278,11 @@ namespace Serialization {
     // *************** Exception ***************
     // *
 
+    /** @brief Print exception message to stdout.
+     *
+     * Prints the message of this Exception to the currently defined standard
+     * output (that is to the terminal console for example).
+     */
     void Exception::PrintMessage() {
         std::cout << "Serialization::Exception: " << Message << std::endl;
     }
