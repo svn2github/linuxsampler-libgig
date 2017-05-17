@@ -431,9 +431,11 @@ namespace Serialization {
      *
      * Returns the unique identifier of the original C/C++ member instance of
      * your C++ class. It is important to know that this unique identifier is
-     * not generated particularly for Member objects. That means no matter how
-     * many individual Member objects are created, as long as they are
-     * representing the same member variable of the same original native
+     * not meant to be unique for Member instances themselves, but it is rather
+     * meant to be unique for the original native C/C++ data these Member
+     * instances are representing. So that means no matter how many individual
+     * Member objects are created, as long as they are representing the same
+     * original native member variable of the same original native
      * instance of your C++ class, then all those separately created Member
      * objects return the same unique identifier here.
      *
@@ -2080,9 +2082,15 @@ namespace Serialization {
             setIntValue(object, atoll(value.c_str()));
         else if (type.isReal())
             setRealValue(object, atof(value.c_str()));
-        else if (type.isBool())
-            setBoolValue(object, atof(value.c_str()));
-        else if (type.isEnum())
+        else if (type.isBool()) {
+            String val = toLowerCase(value);
+            if (val == "true" || val == "yes" || val == "1")
+                setBoolValue(object, true);
+            else if (val == "false" || val == "no" || val == "0")
+                setBoolValue(object, false);
+            else
+                setBoolValue(object, atof(value.c_str()));
+        } else if (type.isEnum())
             setEnumValue(object, atoll(value.c_str()));
         else
             throw Exception("Not a primitive data type");

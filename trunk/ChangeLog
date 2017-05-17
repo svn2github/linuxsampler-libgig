@@ -70,6 +70,8 @@ Version SVN trunk
     - Archive: Added methods valueAsInt(), valueAsReal() and valueAsBool().
     - DataType: Implemented demangling C++ type names (for methods
       asLongDescr() and customTypeName(bool demangle=false)).
+    - Archive::setAutoValue(): Handle human readable boolean text
+      representations like "yes", "no", "true", "false" as expected.
 
   * src/tools/akaidump.cpp, src/tools/akaiextract.cpp:
     - improved output of non-ascii characters in usage messages

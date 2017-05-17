@@ -222,11 +222,12 @@ namespace Serialization {
         return __is_pod(T);
     }*/
 
-    /** @brief Unique identifier for one specific C++ object, member or fundamental variable.
+    /** @brief Unique identifier referring to one specific native C++ object, member, fundamental variable, or any other native C++ data.
      *
-     * Reflects a unique identifier for one specific serialized C++ class
-     * instance, C/C++ struct instance, member, primitive pointer, or
-     * fundamental variables.
+     * Reflects a unique identifier for one specific serialized C++ data, i.e.
+     * C++ class instance, C/C++ struct instance, member, primitive pointer,
+     * fundamental variables, or any other native C/C++ data originally being
+     * serialized.
      *
      * A unique identifier is composed of an id (an identifier which is not
      * necessarily unique) and a size. Since the underlying ID is derived from
@@ -506,22 +507,27 @@ namespace Serialization {
         friend Member _popMemberBlob(const char*& p, const char* end);
     };
 
-    /** @brief Abstract reflection of a native C++ class/struct instance.
+    /** @brief Abstract reflection of some native serialized C/C++ data.
      *
-     * Provides detailed information about a specific serialized C++ object,
-     * like its C++ member variables, its C++ class/struct name, its native
-     * memory size and more. When your native C++ objects are serialized, all
-     * native data is translated reflected by such an Object reflection. So each
-     * instance of your serialized C++ class objects become available as an
-     * Object, but also each member variable of your C++ objects, and all other
-     * native C/C++ data. So essentially every native data is turned into its
-     * own Object and accessible by this API.
+     * When your native C++ objects are serialized, all native data is
+     * translated and reflected by such an Object reflection. So each instance
+     * of your serialized native C++ class objects become available as an
+     * Object, but also each member variable of your C++ objects is translated
+     * into an Object, and any other native C/C++ data. So essentially every
+     * native data is turned into its own Object and accessible by this API.
+     *
+     * For each one of those Object reflections, this class provides detailed
+     * information about their native origin. For example if an Object
+     * represents a native C++ class instante, then it provides access to its
+     * C++ class/struct name, to its C++ member variables, its native memory
+     * size and much more.
      *
      * Even though this framework allows you to adjust abstract Object instances
      * to a certain extent, most of the methods of this Object class are
      * read-only though and the actual modifyable methods are made available
      * not as part of this Object class, but as part of the Archive class
-     * instead. This was designed like this for performance and safety reasons.
+     * instead. This design decision was made for performance and safety
+     * reasons.
      *
      * @see Archive::setIntValue() as an example for modifying Object instances.
      */
