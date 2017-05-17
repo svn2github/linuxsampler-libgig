@@ -2090,7 +2090,7 @@ namespace Serialization {
                 setBoolValue(object, false);
             else
                 setBoolValue(object, atof(value.c_str()));
-        } else if (type.isEnum())
+        } else if (type.isEnum())
             setEnumValue(object, atoll(value.c_str()));
         else
             throw Exception("Not a primitive data type");
