@@ -23,7 +23,7 @@
 
 #include "helper.h"
 
-#if !HAVE_VASPRINTF && defined(WIN32)
+#if /*!HAVE_VASPRINTF &&*/ defined(WIN32)
 
 #include <stdio.h>
 #include <stdlib.h>

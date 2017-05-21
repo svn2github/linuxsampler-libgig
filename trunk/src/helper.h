@@ -35,7 +35,7 @@
 # define VERSION VER_STRING // VER_STRING defined in libgig_private.h
 #endif // WIN32
 
-#if HAVE_CONFIG_H && !HAVE_VASPRINTF && defined(WIN32)
+#if HAVE_CONFIG_H /*&& !HAVE_VASPRINTF*/ && defined(WIN32)
 # include <stdarg.h>
 int vasprintf(char** ret, const char* format, va_list arg);
 #endif
