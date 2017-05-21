@@ -3,7 +3,7 @@
 
 m4_define(libgig_release_major, 4)
 m4_define(libgig_release_minor, 0)
-m4_define(libgig_release_build, 0.svn24)
+m4_define(libgig_release_build, 0.svn25)
 
 
 AC_INIT([libgig],[libgig_release_major.libgig_release_minor.libgig_release_build])
@@ -86,6 +86,7 @@ fi
 AC_CHECK_HEADERS(uuid/uuid.h)
 AC_SEARCH_LIBS(uuid_generate, uuid)
 AC_CHECK_FUNCS(uuid_generate)
+AC_CHECK_FUNCS(vasprintf)
 
 case "$host" in
     *mingw*|*cygwin*)
