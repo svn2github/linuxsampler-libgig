@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2016 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
@@ -2251,8 +2251,30 @@ namespace RIFF {
 // *************** Exception ***************
 // *
 
+    Exception::Exception() {
+    }
+
+    Exception::Exception(String format, ...) {
+        va_list arg;
+        va_start(arg, format);
+        Message = assemble(format, arg);
+        va_end(arg);
+    }
+
+    Exception::Exception(String format, va_list arg) {
+        Message = assemble(format, arg);
+    }
+
     void Exception::PrintMessage() {
         std::cout << "RIFF::Exception: " << Message << std::endl;
+    }
+
+    String Exception::assemble(String format, va_list arg) {
+        char* buf = NULL;
+        vasprintf(&buf, format.c_str(), arg);
+        String s = buf;
+        free(buf);
+        return s;
     }
 
 

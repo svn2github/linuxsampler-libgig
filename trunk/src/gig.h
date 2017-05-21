@@ -1365,8 +1365,11 @@ namespace gig {
      */
     class Exception : public DLS::Exception {
         public:
-            Exception(String Message);
+            Exception(String format, ...);
+            Exception(String format, va_list arg);
             void PrintMessage();
+        protected:
+            Exception();
     };
 
 #if HAVE_RTTI

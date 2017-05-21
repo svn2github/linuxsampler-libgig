@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2016 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
@@ -552,8 +552,11 @@ namespace DLS {
      */
     class Exception : public RIFF::Exception {
         public:
-            Exception(String Message);
+            Exception(String format, ...);
+            Exception(String format, va_list arg);
             void PrintMessage();
+        protected:
+            Exception();
     };
 
     String libraryName();

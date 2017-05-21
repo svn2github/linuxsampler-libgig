@@ -35,6 +35,7 @@
 #include <vector>
 #include <map>
 #include <time.h>
+#include <stdarg.h>
 
 #ifndef __has_extension
 # define __has_extension(x) 0
@@ -1173,9 +1174,14 @@ namespace Serialization {
         public:
             String Message;
 
-            Exception(String Message) { Exception::Message = Message; }
+            Exception(String format, ...);
+            Exception(String format, va_list arg);
             void PrintMessage();
             virtual ~Exception() {}
+
+        protected:
+            Exception();
+            static String assemble(String format, va_list arg);
     };
 
 } // namespace Serialization

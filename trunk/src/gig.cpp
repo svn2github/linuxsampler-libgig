@@ -2619,7 +2619,7 @@ namespace {
 
             // unknown controller type
             default:
-                throw gig::Exception("Unknown leverage controller type.");
+                throw gig::Exception("Unknown leverage controller type (0x%x).", EncodedController);
         }
         return decodedcontroller;
     }
@@ -6473,7 +6473,18 @@ namespace {
 // *************** Exception ***************
 // *
 
-    Exception::Exception(String Message) : DLS::Exception(Message) {
+    Exception::Exception() : DLS::Exception() {
+    }
+
+    Exception::Exception(String format, ...) : DLS::Exception() {
+        va_list arg;
+        va_start(arg, format);
+        Message = assemble(format, arg);
+        va_end(arg);
+    }
+
+    Exception::Exception(String format, va_list arg) : DLS::Exception() {
+        Message = assemble(format, arg);
     }
 
     void Exception::PrintMessage() {

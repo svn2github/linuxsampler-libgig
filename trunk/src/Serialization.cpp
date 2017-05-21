@@ -2286,6 +2286,20 @@ namespace Serialization {
     // *************** Exception ***************
     // *
 
+    Exception::Exception() {
+    }
+
+    Exception::Exception(String format, ...) {
+        va_list arg;
+        va_start(arg, format);
+        Message = assemble(format, arg);
+        va_end(arg);
+    }
+
+    Exception::Exception(String format, va_list arg) {
+        Message = assemble(format, arg);
+    }
+
     /** @brief Print exception message to stdout.
      *
      * Prints the message of this Exception to the currently defined standard
@@ -2293,6 +2307,14 @@ namespace Serialization {
      */
     void Exception::PrintMessage() {
         std::cout << "Serialization::Exception: " << Message << std::endl;
+    }
+
+    String Exception::assemble(String format, va_list arg) {
+        char* buf = NULL;
+        vasprintf(&buf, format.c_str(), arg);
+        String s = buf;
+        free(buf);
+        return s;
     }
 
 } // namespace Serialization

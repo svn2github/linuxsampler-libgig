@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2016 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
@@ -41,6 +41,7 @@
 #include <map>
 #include <set>
 #include <iostream>
+#include <stdarg.h>
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -404,9 +405,14 @@ namespace RIFF {
         public:
             String Message;
 
-            Exception(String Message) { Exception::Message = Message; }
+            Exception(String format, ...);
+            Exception(String format, va_list arg);
             void PrintMessage();
             virtual ~Exception() {}
+
+        protected:
+            Exception();
+            static String assemble(String format, va_list arg);
     };
 
     String libraryName();

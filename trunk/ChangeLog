@@ -36,10 +36,16 @@ Version SVN trunk
       objects (and crossfade_t and leverage_ctrl_t objects).
     - Added enum reflection API functions for retrieving enum declaration type
       information at runtime (enumCount(), enumKey(), enumKeys(), enumValue()).
+    - Exception class now has a variadic constructor which allows to add
+      textual format specifiers like with printf().
+    - On unknown leverage controller exception: show precise unknown leverage
+      controller number found.
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files
       larger than 4 GB).
+    - Exception class now has a variadic constructor which allows to add
+      textual format specifiers like with printf().
       
   * src/RIFF.cpp, src/RIFF.h:
     - added support for RIFF files larger than 4 GB, by default the required
@@ -49,6 +55,8 @@ Version SVN trunk
       with a new option added to the RIFF File constructor though
     - when saving a modified, grown RIFF file, the temporary file size during
       Save() operation will no longer be larger than the final grown file size
+    - Exception class now has a variadic constructor which allows to add
+      textual format specifiers like with printf().
 
   * src/Serialization.cpp, src/Serialization.h:
     - Archive: Added method isModified().
@@ -72,6 +80,8 @@ Version SVN trunk
       asLongDescr() and customTypeName(bool demangle=false)).
     - Archive::setAutoValue(): Handle human readable boolean text
       representations like "yes", "no", "true", "false" as expected.
+    - Exception class now has a variadic constructor which allows to add
+      textual format specifiers like with printf().
 
   * src/tools/akaidump.cpp, src/tools/akaiextract.cpp:
     - improved output of non-ascii characters in usage messages
