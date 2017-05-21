@@ -37,11 +37,11 @@ int vasprintf(char** ret, const char* format, va_list arg) {
     if (len < 0)
         return -1;
     const size_t size = ((size_t) len) + 1;
-    char* buf = malloc(size);
+    char* buf = (char*) malloc(size);
     if (!buf)
         return -1;
     memset(buf, 0, size);
-    int res = _vsprintf_s(buf, size, format, arg);
+    int res = _vsnprintf(buf, size, format, arg);
     if (res < 0) {
         free(buf);
         return -1;
