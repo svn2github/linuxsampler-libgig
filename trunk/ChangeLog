@@ -40,6 +40,8 @@ Version SVN trunk
       textual format specifiers like with printf().
     - On unknown leverage controller exception: show precise unknown leverage
       controller number found.
+    - Ignore invalid leverage controller types and just show a warning on the
+      console instead of throwing an exception.
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files

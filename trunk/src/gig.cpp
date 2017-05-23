@@ -2619,7 +2619,10 @@ namespace {
 
             // unknown controller type
             default:
-                throw gig::Exception("Unknown leverage controller type (0x%x).", EncodedController);
+                decodedcontroller.type = leverage_ctrl_t::type_none;
+                decodedcontroller.controller_number = 0;
+                printf("Warning: Unknown leverage controller type (0x%x).\n", EncodedController);
+                break;
         }
         return decodedcontroller;
     }
