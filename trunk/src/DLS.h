@@ -124,7 +124,7 @@ namespace DLS {
     };
 
     /** Connection Sources */
-    typedef enum {
+    enum conn_src_t {
         // Modulator Sources
         conn_src_none            = 0x0000,
         conn_src_lfo             = 0x0001,
@@ -147,10 +147,10 @@ namespace DLS {
         conn_src_rpn0            = 0x0100,
         conn_src_rpn1            = 0x0101,
         conn_src_rpn2            = 0x0102
-    } conn_src_t;
+    };
 
     /** Connection Destinations */
-    typedef enum {
+    enum conn_dst_t {
         // Generic Destinations
         conn_dst_none             = 0x0000,
         conn_dst_gain             = 0x0001,
@@ -192,16 +192,16 @@ namespace DLS {
         // Filter Destinations
         conn_dst_filter_cutoff    = 0x0500,
         conn_dst_filter_q         = 0x0501
-    } conn_dst_t;
+    };
 
     /** Connection Transforms */
-    typedef enum {
+    enum conn_trn_t {
         conn_trn_none    = 0x0000,
         conn_trn_concave = 0x0001,
         conn_trn_convex  = 0x0002,
         conn_trn_switch  = 0x0003
-    } conn_trn_t;
-    
+    };
+
     /** Lower and upper limit of a range. */
     struct range_t {
         uint16_t low;  ///< Low value of range.

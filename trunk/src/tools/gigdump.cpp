@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2016 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This program is part of libgig.                                       *
@@ -508,7 +508,8 @@ void PrintDimensionRegions(gig::Region* rgn) {
             cout << endl;
         }
 #endif
-        cout << "                Pan=" << (int) pDimensionRegion->Pan << endl;
+        gig::eg_opt_t& egopt = pDimensionRegion->EGOptions;
+        cout << "                Pan=" << (int) pDimensionRegion->Pan << ", EGAttackCancel=" << egopt.AttackCancel << ", EGAttackHoldCancel=" << egopt.AttackHoldCancel << ", EGDecayCancel=" << egopt.DecayCancel << ", EGReleaseCancel=" << egopt.ReleaseCancel << endl;
 
         dimensionRegions++;
     }

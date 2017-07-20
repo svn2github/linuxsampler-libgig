@@ -42,6 +42,9 @@ Version SVN trunk
       controller number found.
     - Ignore invalid leverage controller types and just show a warning on the
       console instead of throwing an exception.
+    - Added new struct eg_opt_t and new class member variable
+      DimensionRegion::EGOptions as an extension to the gig file format, which
+      allows to override the default behavior of EGs' state machines.
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files
@@ -105,6 +108,7 @@ Version SVN trunk
       rebuilding the gig file's global checksum table (i.e. in case the
       file's checksum table was damaged)
     - print samples' CRC32 checksums
+    - Print the new EG behavior options (eg_opt_t).
 
   * src/tools/gigextract.cpp:
     - Fix: if sample name contains a path separator (slash or backslash) then

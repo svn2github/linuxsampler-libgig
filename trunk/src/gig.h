@@ -61,6 +61,7 @@
 # define CHUNK_ID_SCRI  0x53637269 // own gig format extension
 # define CHUNK_ID_LSNM  0x4c534e4d // own gig format extension
 # define CHUNK_ID_SCSL  0x5343534c // own gig format extension
+# define CHUNK_ID_LSDE  0x4c534445 // own gig format extension
 #else  // little endian
 # define LIST_TYPE_3PRG	0x67727033
 # define LIST_TYPE_3EWL	0x6C776533
@@ -79,6 +80,7 @@
 # define CHUNK_ID_SCRI  0x69726353 // own gig format extension
 # define CHUNK_ID_LSNM  0x4d4e534c // own gig format extension
 # define CHUNK_ID_SCSL  0x4c534353 // own gig format extension
+# define CHUNK_ID_LSDE  0x4544534c // own gig format extension
 #endif // WORDS_BIGENDIAN
 
 #ifndef GIG_DECLARE_ENUM
@@ -378,6 +380,39 @@ namespace gig {
         file_offset_t loop_cycles_left;  ///< How many times the loop has still to be passed, this value will be decremented with each loop cycle.
     };
 
+    /**
+     * Defines behavior options for envelope generators.
+     *
+     * These options allow to override the precise default behavior of the
+     * envelope generators' state machines.
+     *
+     * @b Note: These EG options are an extension to the original gig file
+     * format, so these options are not available with the original
+     * Gigasampler/GigaStudio software! Currently only LinuxSampler and gigedit
+     * support these EG options!
+     *
+     * Adding these options to the original gig file format was necessary,
+     * because the precise state machine behavior of envelope generators of the
+     * gig format (and thus the default EG behavior if not explicitly overridden
+     * here) deviates from common, expected behavior of envelope generators in
+     * general, if i.e. compared with EGs of hardware synthesizers. For example
+     * with the gig format, the attack and decay stages will be aborted as soon
+     * as a note-off is received. Most other EG implementations in the industry
+     * however always run the attack and decay stages to their full duration,
+     * even if an early note-off arrives. The latter behavior is intentionally
+     * implemented in most other products, because it is required to resemble
+     * percussive sounds in a realistic manner.
+     */
+    struct eg_opt_t {
+        bool AttackCancel;     ///< Whether the "attack" stage is cancelled when receiving a note-off (default: @c true).
+        bool AttackHoldCancel; ///< Whether the "attack hold" stage is cancelled when receiving a note-off (default: @c true).
+        bool DecayCancel;      ///< Whether the "decay" stage is cancelled when receiving a note-off (default: @c true).
+        bool ReleaseCancel;    ///< Whether the "release" stage is cancelled when receiving a note-on (default: @c true).
+
+        eg_opt_t();
+        void serialize(Serialization::Archive* archive);
+    };
+
     // just symbol prototyping
     class File;
     class Instrument;
@@ -516,6 +551,7 @@ namespace gig {
             uint16_t           SampleStartOffset;             ///< Number of samples the sample start should be moved (0 - 2000).
             double             SampleAttenuation;             ///< Sample volume (calculated from DLS::Sampler::Gain)
             uint8_t            DimensionUpperLimits[8];       ///< gig3: defines the upper limit of the dimension values for this dimension region. In case you wondered why this is defined on DimensionRegion level and not on Region level: the zone sizes (upper limits) of the velocity dimension can indeed differ in the individual dimension regions, depending on which zones of the other dimension types are currently selected. So this is exceptional for the velocity dimension only. All other dimension types have the same dimension zone sizes for every single DimensionRegion (of the sample Region).
+            eg_opt_t           EGOptions;                     ///< [gig extension]: Behavior options which should be used for all 3 envelope generators.
 
             // derived attributes from DLS::Sampler
             using DLS::Sampler::UnityNote;

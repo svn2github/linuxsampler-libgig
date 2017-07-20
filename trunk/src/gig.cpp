@@ -341,6 +341,25 @@ namespace {
 
 
 
+// *************** eg_opt_t ***************
+// *
+
+    eg_opt_t::eg_opt_t() {
+        AttackCancel     = true;
+        AttackHoldCancel = true;
+        DecayCancel      = true;
+        ReleaseCancel    = true;
+    }
+
+    void eg_opt_t::serialize(Serialization::Archive* archive) {
+        SRLZ(AttackCancel);
+        SRLZ(AttackHoldCancel);
+        SRLZ(DecayCancel);
+        SRLZ(ReleaseCancel);
+    }
+
+
+
 // *************** Sample ***************
 // *
 
@@ -1711,6 +1730,16 @@ namespace {
             VCFType                         = vcf_type_lowpass;
             memset(DimensionUpperLimits, 127, 8);
         }
+        // format extension for EG behavior options, these will *NOT* work with
+        // Gigasampler/GigaStudio !
+        RIFF::Chunk* lsde = _3ewl->GetSubChunk(CHUNK_ID_LSDE);
+        if (lsde) {
+            unsigned char byte = lsde->ReadUint8();
+            EGOptions.AttackCancel     = byte & 1;
+            EGOptions.AttackHoldCancel = byte & (1 << 1);
+            EGOptions.DecayCancel      = byte & (1 << 2);
+            EGOptions.ReleaseCancel    = byte & (1 << 3);
+        }
 
         pVelocityAttenuationTable = GetVelocityTable(VelocityResponseCurve,
                                                      VelocityResponseDepth,
@@ -1899,6 +1928,7 @@ namespace {
         SRLZ(MSDecode);
         //SRLZ(SampleStartOffset);
         SRLZ(SampleAttenuation);
+        SRLZ(EGOptions);
 
         // derived attributes from DLS::Sampler
         SRLZ(FineTune);
@@ -2204,6 +2234,28 @@ namespace {
 
         if (chunksize >= 148) {
             memcpy(&pData[140], DimensionUpperLimits, 8);
+        }
+
+        // format extension for EG behavior options, these will *NOT* work with
+        // Gigasampler/GigaStudio !
+        RIFF::Chunk* lsde = pParentList->GetSubChunk(CHUNK_ID_LSDE);
+        if (!lsde) {
+            // only add this "LSDE" chunk if the EG options do not match the
+            // default EG behavior
+            eg_opt_t defaultOpt;
+            if (memcmp(&EGOptions, &defaultOpt, sizeof(eg_opt_t))) {
+                lsde = pParentList->AddSubChunk(CHUNK_ID_LSDE, 1);
+                // move LSDE chunk to the end of parent list
+                pParentList->MoveSubChunk(lsde, (RIFF::Chunk*)NULL);
+            }
+        }
+        if (lsde) {
+            unsigned char* pByte = (unsigned char*) lsde->LoadChunkData();
+            *pByte =
+                (EGOptions.AttackCancel     ? 1 : 0) |
+                (EGOptions.AttackHoldCancel ? (1<<1) : 0) |
+                (EGOptions.DecayCancel      ? (1<<2) : 0) |
+                (EGOptions.ReleaseCancel    ? (1<<3) : 0);
         }
     }
 
