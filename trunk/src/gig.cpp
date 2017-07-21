@@ -347,14 +347,16 @@ namespace {
     eg_opt_t::eg_opt_t() {
         AttackCancel     = true;
         AttackHoldCancel = true;
-        DecayCancel      = true;
+        Decay1Cancel     = true;
+        Decay2Cancel     = true;
         ReleaseCancel    = true;
     }
 
     void eg_opt_t::serialize(Serialization::Archive* archive) {
         SRLZ(AttackCancel);
         SRLZ(AttackHoldCancel);
-        SRLZ(DecayCancel);
+        SRLZ(Decay1Cancel);
+        SRLZ(Decay2Cancel);
         SRLZ(ReleaseCancel);
     }
 
@@ -1737,8 +1739,9 @@ namespace {
             unsigned char byte = lsde->ReadUint8();
             EGOptions.AttackCancel     = byte & 1;
             EGOptions.AttackHoldCancel = byte & (1 << 1);
-            EGOptions.DecayCancel      = byte & (1 << 2);
-            EGOptions.ReleaseCancel    = byte & (1 << 3);
+            EGOptions.Decay1Cancel     = byte & (1 << 2);
+            EGOptions.Decay2Cancel     = byte & (1 << 3);
+            EGOptions.ReleaseCancel    = byte & (1 << 4);
         }
 
         pVelocityAttenuationTable = GetVelocityTable(VelocityResponseCurve,
@@ -2254,8 +2257,9 @@ namespace {
             *pByte =
                 (EGOptions.AttackCancel     ? 1 : 0) |
                 (EGOptions.AttackHoldCancel ? (1<<1) : 0) |
-                (EGOptions.DecayCancel      ? (1<<2) : 0) |
-                (EGOptions.ReleaseCancel    ? (1<<3) : 0);
+                (EGOptions.Decay1Cancel     ? (1<<2) : 0) |
+                (EGOptions.Decay2Cancel     ? (1<<3) : 0) |
+                (EGOptions.ReleaseCancel    ? (1<<4) : 0);
         }
     }
 

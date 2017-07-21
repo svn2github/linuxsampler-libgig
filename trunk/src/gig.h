@@ -381,7 +381,7 @@ namespace gig {
     };
 
     /**
-     * Defines behavior options for envelope generators.
+     * Defines behavior options for envelope generators (gig format extension).
      *
      * These options allow to override the precise default behavior of the
      * envelope generators' state machines.
@@ -406,7 +406,8 @@ namespace gig {
     struct eg_opt_t {
         bool AttackCancel;     ///< Whether the "attack" stage is cancelled when receiving a note-off (default: @c true).
         bool AttackHoldCancel; ///< Whether the "attack hold" stage is cancelled when receiving a note-off (default: @c true).
-        bool DecayCancel;      ///< Whether the "decay" stage is cancelled when receiving a note-off (default: @c true).
+        bool Decay1Cancel;     ///< Whether the "decay 1" stage is cancelled when receiving a note-off (default: @c true).
+        bool Decay2Cancel;     ///< Whether the "decay 2" stage is cancelled when receiving a note-off (default: @c true).
         bool ReleaseCancel;    ///< Whether the "release" stage is cancelled when receiving a note-on (default: @c true).
 
         eg_opt_t();
