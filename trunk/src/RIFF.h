@@ -148,33 +148,33 @@ namespace RIFF {
     typedef uint64_t file_offset_t;
 
     /** Whether file stream is open in read or in read/write mode. */
-    typedef enum {
+    enum stream_mode_t {
         stream_mode_read       = 0,
         stream_mode_read_write = 1,
         stream_mode_closed     = 2
-    } stream_mode_t;
+    };
 
     /** Current state of the file stream. */
-    typedef enum {
+    enum stream_state_t {
         stream_ready       = 0,
         stream_end_reached = 1,
         stream_closed      = 2
-    } stream_state_t;
+    };
 
     /** File stream position dependent to these relations. */
-    typedef enum {
+    enum stream_whence_t {
         stream_start    = 0,
         stream_curpos   = 1,
         stream_backward = 2,
         stream_end      = 3
-    } stream_whence_t;
+    };
 
     /** Alignment of data bytes in memory (system dependant). */
-    typedef enum {
+    enum endian_t {
         endian_little = 0,
         endian_big    = 1,
         endian_native = 2
-    } endian_t;
+    };
 
     /** General RIFF chunk structure of a RIFF file. */
     enum layout_t {
