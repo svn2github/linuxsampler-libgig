@@ -1736,12 +1736,15 @@ namespace {
         // Gigasampler/GigaStudio !
         RIFF::Chunk* lsde = _3ewl->GetSubChunk(CHUNK_ID_LSDE);
         if (lsde) {
-            unsigned char byte = lsde->ReadUint8();
-            EGOptions.AttackCancel     = byte & 1;
-            EGOptions.AttackHoldCancel = byte & (1 << 1);
-            EGOptions.Decay1Cancel     = byte & (1 << 2);
-            EGOptions.Decay2Cancel     = byte & (1 << 3);
-            EGOptions.ReleaseCancel    = byte & (1 << 4);
+            eg_opt_t* pEGOpts[2] = { &EG1Options, &EG2Options };
+            for (int i = 0; i < 2; ++i) {
+                unsigned char byte = lsde->ReadUint8();
+                pEGOpts[i]->AttackCancel     = byte & 1;
+                pEGOpts[i]->AttackHoldCancel = byte & (1 << 1);
+                pEGOpts[i]->Decay1Cancel     = byte & (1 << 2);
+                pEGOpts[i]->Decay2Cancel     = byte & (1 << 3);
+                pEGOpts[i]->ReleaseCancel    = byte & (1 << 4);
+            }
         }
 
         pVelocityAttenuationTable = GetVelocityTable(VelocityResponseCurve,
@@ -1931,7 +1934,8 @@ namespace {
         SRLZ(MSDecode);
         //SRLZ(SampleStartOffset);
         SRLZ(SampleAttenuation);
-        SRLZ(EGOptions);
+        SRLZ(EG1Options);
+        SRLZ(EG2Options);
 
         // derived attributes from DLS::Sampler
         SRLZ(FineTune);
@@ -2246,20 +2250,25 @@ namespace {
             // only add this "LSDE" chunk if the EG options do not match the
             // default EG behavior
             eg_opt_t defaultOpt;
-            if (memcmp(&EGOptions, &defaultOpt, sizeof(eg_opt_t))) {
-                lsde = pParentList->AddSubChunk(CHUNK_ID_LSDE, 1);
+            if (memcmp(&EG1Options, &defaultOpt, sizeof(eg_opt_t)) ||
+                memcmp(&EG2Options, &defaultOpt, sizeof(eg_opt_t)))
+            {
+                lsde = pParentList->AddSubChunk(CHUNK_ID_LSDE, 2);
                 // move LSDE chunk to the end of parent list
                 pParentList->MoveSubChunk(lsde, (RIFF::Chunk*)NULL);
             }
         }
         if (lsde) {
-            unsigned char* pByte = (unsigned char*) lsde->LoadChunkData();
-            *pByte =
-                (EGOptions.AttackCancel     ? 1 : 0) |
-                (EGOptions.AttackHoldCancel ? (1<<1) : 0) |
-                (EGOptions.Decay1Cancel     ? (1<<2) : 0) |
-                (EGOptions.Decay2Cancel     ? (1<<3) : 0) |
-                (EGOptions.ReleaseCancel    ? (1<<4) : 0);
+            unsigned char* pData = (unsigned char*) lsde->LoadChunkData();
+            eg_opt_t* pEGOpts[2] = { &EG1Options, &EG2Options };
+            for (int i = 0; i < 2; ++i) {
+                pData[i] =
+                    (pEGOpts[i]->AttackCancel     ? 1 : 0) |
+                    (pEGOpts[i]->AttackHoldCancel ? (1<<1) : 0) |
+                    (pEGOpts[i]->Decay1Cancel     ? (1<<2) : 0) |
+                    (pEGOpts[i]->Decay2Cancel     ? (1<<3) : 0) |
+                    (pEGOpts[i]->ReleaseCancel    ? (1<<4) : 0);
+            }
         }
     }
 

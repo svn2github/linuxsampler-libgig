@@ -43,8 +43,9 @@ Version SVN trunk
     - Ignore invalid leverage controller types and just show a warning on the
       console instead of throwing an exception.
     - Added new struct eg_opt_t and new class member variable
-      DimensionRegion::EGOptions as an extension to the gig file format, which
-      allows to override the default behavior of EGs' state machines.
+      DimensionRegion::EG1Options and DimensionRegion::EG2Options as an
+      extension to the gig file format, which allows to override the default
+      behavior of the first two EGs' state machines.
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files

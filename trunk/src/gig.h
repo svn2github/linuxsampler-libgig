@@ -552,7 +552,8 @@ namespace gig {
             uint16_t           SampleStartOffset;             ///< Number of samples the sample start should be moved (0 - 2000).
             double             SampleAttenuation;             ///< Sample volume (calculated from DLS::Sampler::Gain)
             uint8_t            DimensionUpperLimits[8];       ///< gig3: defines the upper limit of the dimension values for this dimension region. In case you wondered why this is defined on DimensionRegion level and not on Region level: the zone sizes (upper limits) of the velocity dimension can indeed differ in the individual dimension regions, depending on which zones of the other dimension types are currently selected. So this is exceptional for the velocity dimension only. All other dimension types have the same dimension zone sizes for every single DimensionRegion (of the sample Region).
-            eg_opt_t           EGOptions;                     ///< [gig extension]: Behavior options which should be used for all 3 envelope generators.
+            eg_opt_t           EG1Options;                    ///< [gig extension]: Behavior options which should be used for envelope generator 1 (volume amplitude EG).
+            eg_opt_t           EG2Options;                    ///< [gig extension]: Behavior options which should be used for envelope generator 2 (filter cutoff EG).
 
             // derived attributes from DLS::Sampler
             using DLS::Sampler::UnityNote;
