@@ -508,8 +508,15 @@ void PrintDimensionRegions(gig::Region* rgn) {
             cout << endl;
         }
 #endif
-        gig::eg_opt_t& egopt = pDimensionRegion->EGOptions;
-        cout << "                Pan=" << (int) pDimensionRegion->Pan << ", EGAttackCancel=" << egopt.AttackCancel << ", EGAttackHoldCancel=" << egopt.AttackHoldCancel << ", EGDecay1Cancel=" << egopt.Decay1Cancel << ", EGDecay2Cancel=" << egopt.Decay2Cancel << ", EGReleaseCancel=" << egopt.ReleaseCancel << endl;
+        cout << "                Pan=" << (int) pDimensionRegion->Pan << endl;
+        {
+            gig::eg_opt_t& egopt = pDimensionRegion->EG1Options;
+            cout << "                EG1AttackCancel=" << egopt.AttackCancel << ", EG1AttackHoldCancel=" << egopt.AttackHoldCancel << ", EG1Decay1Cancel=" << egopt.Decay1Cancel << ", EG1Decay2Cancel=" << egopt.Decay2Cancel << ", EG1ReleaseCancel=" << egopt.ReleaseCancel << endl;
+        }
+        {
+            gig::eg_opt_t& egopt = pDimensionRegion->EG2Options;
+            cout << "                EG2AttackCancel=" << egopt.AttackCancel << ", EG2AttackHoldCancel=" << egopt.AttackHoldCancel << ", EG2Decay1Cancel=" << egopt.Decay1Cancel << ", EG2Decay2Cancel=" << egopt.Decay2Cancel << ", EG2ReleaseCancel=" << egopt.ReleaseCancel << endl;
+        }
 
         dimensionRegions++;
     }
