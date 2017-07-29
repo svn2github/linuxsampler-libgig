@@ -88,8 +88,8 @@ Version SVN trunk
       representations like "yes", "no", "true", "false" as expected.
     - Exception class now has a variadic constructor which allows to add
       textual format specifiers like with printf().
-    - DataType fix: Retain backward compatiblity to older versions of native
-      C++ classes/strcts.
+    - DataType fix: Retain backward compatibility to older versions of native
+      C++ classes/structs.
 
   * src/tools/akaidump.cpp, src/tools/akaiextract.cpp:
     - improved output of non-ascii characters in usage messages
