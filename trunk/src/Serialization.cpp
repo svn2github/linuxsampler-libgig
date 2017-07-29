@@ -250,11 +250,16 @@ namespace Serialization {
      * characteristic is compared as well. So a @c double type and @c double*
      * type are also considered to be not equal data types and hence this method
      * would return @c false.
+     *
+     * As an exception here, classes and structs with the same class/struct name
+     * but different sizes are also considered to be "equal". This relaxed
+     * requirement is necessary to retain backward compatiblity to older
+     * versions of the same native C++ classes/structs.
      */
     bool DataType::operator==(const DataType& other) const {
         return m_baseTypeName   == other.m_baseTypeName &&
                m_customTypeName == other.m_customTypeName &&
-               m_size           == other.m_size &&
+               (m_size == other.m_size || (isClass() && other.isClass())) &&
                m_isPointer      == other.m_isPointer;
     }
 
