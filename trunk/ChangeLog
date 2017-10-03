@@ -50,6 +50,8 @@ Version SVN trunk
       behavior of the first two EGs' state machines.
     - Fixed undefined behavior when loading a gig file with invalid
       velocity curve parameters (fixes CVE-2017-12951).
+    - Fixed undefined behavior when loading a gig file with invalid wave
+      pool index number (fixes CVE-2017-12954).
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files

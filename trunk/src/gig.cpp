@@ -4143,6 +4143,7 @@ namespace {
         if ((int32_t)WavePoolTableIndex == -1) return NULL;
         File* file = (File*) GetParent()->GetParent();
         if (!file->pWavePoolTable) return NULL;
+        if (WavePoolTableIndex + 1 > file->WavePoolCount) return NULL;
         // for new files or files >= 2 GB use 64 bit wave pool offsets
         if (file->pRIFF->IsNew() || (file->pRIFF->GetCurrentFileSize() >> 31)) {
             // use 64 bit wave pool offsets (treating this as large file)
