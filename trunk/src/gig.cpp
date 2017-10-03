@@ -2309,6 +2309,33 @@ namespace {
     // get the corresponding velocity table from the table map or create & calculate that table if it doesn't exist yet
     double* DimensionRegion::GetVelocityTable(curve_type_t curveType, uint8_t depth, uint8_t scaling)
     {
+        // sanity check input parameters
+        // (fallback to some default parameters on ill input)
+        switch (curveType) {
+            case curve_type_nonlinear:
+            case curve_type_linear:
+                if (depth > 4) {
+                    printf("Warning: Invalid depth (0x%x) for velocity curve type (0x%x).\n", depth, curveType);
+                    depth   = 0;
+                    scaling = 0;
+                }
+                break;
+            case curve_type_special:
+                if (depth > 5) {
+                    printf("Warning: Invalid depth (0x%x) for velocity curve type 'special'.\n", depth);
+                    depth   = 0;
+                    scaling = 0;
+                }
+                break;
+            case curve_type_unknown:
+            default:
+                printf("Warning: Unknown velocity curve type (0x%x).\n", curveType);
+                curveType = curve_type_linear;
+                depth     = 0;
+                scaling   = 0;
+                break;
+        }
+
         double* table;
         uint32_t tableKey = (curveType<<16) | (depth<<8) | scaling;
         if (pVelocityTables->count(tableKey)) { // if key exists

@@ -48,6 +48,8 @@ Version SVN trunk
       DimensionRegion::EG1Options and DimensionRegion::EG2Options as an
       extension to the gig file format, which allows to override the default
       behavior of the first two EGs' state machines.
+    - Fixed undefined behavior when loading a gig file with invalid
+      velocity curve parameters (fixes CVE-2017-12951).
 
   * src/DLS.cpp, src/DLS.h:
     - Sample: wave pool offsets are now 64 bits (to allow support for files
