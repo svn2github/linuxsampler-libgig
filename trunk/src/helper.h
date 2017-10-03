@@ -206,6 +206,11 @@ inline void SwapMemoryArea(void* pData, unsigned long AreaSize, uint WordSize) {
 inline void LoadString(RIFF::Chunk* ck, std::string& s) {
     if (ck) {
         const char* str = (char*)ck->LoadChunkData();
+        if (!str) {
+            ck->ReleaseChunkData();
+            s = "";
+            return;
+        }
         int size = (int) ck->GetSize();
         int len;
         for (len = 0 ; len < size ; len++)

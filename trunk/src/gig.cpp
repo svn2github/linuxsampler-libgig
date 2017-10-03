@@ -3234,7 +3234,8 @@ namespace {
             if (file->GetAutoLoad()) {
                 for (uint i = 0; i < DimensionRegions; i++) {
                     uint32_t wavepoolindex = _3lnk->ReadUint32();
-                    if (file->pWavePoolTable) pDimensionRegions[i]->pSample = GetSampleFromWavePool(wavepoolindex);
+                    if (file->pWavePoolTable && pDimensionRegions[i])
+                        pDimensionRegions[i]->pSample = GetSampleFromWavePool(wavepoolindex);
                 }
                 GetSample(); // load global region sample reference
             }
@@ -4741,7 +4742,9 @@ namespace {
         RegionList::iterator end  = pRegions->end();
         for (; iter != end; ++iter) {
             gig::Region* pRegion = static_cast<gig::Region*>(*iter);
-            for (int iKey = pRegion->KeyRange.low; iKey <= pRegion->KeyRange.high; iKey++) {
+            const int low  = std::max(int(pRegion->KeyRange.low), 0);
+            const int high = std::min(int(pRegion->KeyRange.high), 127);
+            for (int iKey = low; iKey <= high; iKey++) {
                 RegionKeyTable[iKey] = pRegion;
             }
         }
