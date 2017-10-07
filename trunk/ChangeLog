@@ -12,6 +12,9 @@ Version SVN trunk
       korgdump and sf2extract.
     - Fixed CVE-2017-12950, CVE-2017-12952, CVE-2017-12953
       (original patch by Paul Brossier, slightly modified).
+    - Debian: Fixed packaging error about invalid substitution variable
+      "Source-Version".
+    - Raised Debian compatibility level to Debian 9 "Stretch".
 
   * src/gig.cpp, src/gig.h:
     - fixed bug in Script::SetGroup: the script chunk wasn't moved

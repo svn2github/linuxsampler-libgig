@@ -3,12 +3,12 @@ Section: devel
 Priority: optional
 Maintainer: LinuxSampler Developers <linuxsampler-devel@lists.sourceforge.net>
 Build-Depends: debhelper (>= 4.0.0), pkg-config, libsndfile1-dev, doxygen, uuid-dev
-Standards-Version: 3.7.2
+Standards-Version: 4.0.0
 
 Package: libgig-dev
 Section: libdevel
 Architecture: any
-Depends: libgig7 (= ${Source-Version})
+Depends: libgig7 (= ${source:Version})
 Description: library for accessing Gigasampler, DLS, SoundFont, KORG, AKAI files
  libgig is a C++ library for reading, modifying and creating Gigasampler /
  GigaStudio (.gig) files, DLS (Downloadable Sounds) Level 1/2 files, SoundFont
