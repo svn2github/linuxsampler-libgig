@@ -3,8 +3,10 @@ libgig (4.0.0-1+svn33) unreleased; urgency=low
   * Fixed packaging error about invalid "Source-Version" substitution
     variable.
   * Raised Debian compatibility level to Debian 9 "Stretch".
+  * Added config file /etc/ld.so.conf.d/libgig.conf instead of fiddling
+    with /etc/ld.so.conf directly with postinst and postrm scripts before.
 
- -- Christian Schoenebeck <cuse@users.sourceforge.net>  Sat, 07 Oct 2017 17:59:51 +0200
+ -- Christian Schoenebeck <cuse@users.sourceforge.net>  Fri, 13 Oct 2017 14:55:01 +0200
 
 libgig (4.0.0-1+svn1) unreleased; urgency=low
 

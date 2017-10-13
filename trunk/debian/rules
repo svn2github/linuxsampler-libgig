@@ -80,6 +80,8 @@ install: build
 
 	# Add here commands to install the package into debian/tmp
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	mkdir -p debian/tmp/etc/ld.so.conf.d
+	echo /usr/lib/libgig > debian/tmp/etc/ld.so.conf.d/libgig.conf
 
 # Build architecture-independent files here.
 binary-indep: build install
