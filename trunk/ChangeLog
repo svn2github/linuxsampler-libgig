@@ -100,6 +100,9 @@ Version SVN trunk
     - DataType fix: Retain backward compatibility to older versions of native
       C++ classes/structs.
 
+  * src/Akai.cpp:
+    - Fixed compilation error with recent, more strict compilers.
+
   * src/tools/akaidump.cpp, src/tools/akaiextract.cpp:
     - improved output of non-ascii characters in usage messages
     - fixed printf format strings

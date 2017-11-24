@@ -2,7 +2,7 @@
   libakai - C++ cross-platform akai sample disk reader
   Copyright (C) 2002-2003 Sébastien Métrot
 
-  Linux port by Christian Schoenebeck <cuse@users.sourceforge.net> 2003-2014
+  Linux port by Christian Schoenebeck <cuse@users.sourceforge.net> 2003-2017
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -217,7 +217,7 @@ static struct _CDTOC * ReadTOC(const char *devpath) {
     CFDictionaryRef properties = 0;
     CFDataRef data = 0;
     mach_port_t port = 0;
-    char *devname;
+    const char *devname;
 
     if ((devname = strrchr(devpath, '/')) != NULL) {
         ++devname;
