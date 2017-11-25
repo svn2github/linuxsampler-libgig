@@ -8,7 +8,7 @@ Standards-Version: 4.0.0
 Package: libgig-dev
 Section: libdevel
 Architecture: any
-Depends: libgig7 (= ${source:Version})
+Depends: libgig8 (= ${source:Version})
 Description: library for accessing Gigasampler, DLS, SoundFont, KORG, AKAI files
  libgig is a C++ library for reading, modifying and creating Gigasampler /
  GigaStudio (.gig) files, DLS (Downloadable Sounds) Level 1/2 files, SoundFont
@@ -30,12 +30,12 @@ Description: library for accessing Gigasampler, DLS, SoundFont, KORG, AKAI files
  You will need this only if you intend to compile programs that use this
  library.
 
-Package: libgig7
+Package: libgig8
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Conflicts: libgig6, libgig3c2, libgig
-Replaces: libgig6, libgig3c2, libgig
+Conflicts: libgig7, libgig6, libgig3c2, libgig
+Replaces: libgig7, libgig6, libgig3c2, libgig
 Description: library for accessing Gigasampler, DLS, SoundFont, KORG, AKAI files
  libgig is a C++ library for reading, modifying and creating Gigasampler /
  GigaStudio (.gig) files, DLS (Downloadable Sounds) Level 1/2 files, SoundFont

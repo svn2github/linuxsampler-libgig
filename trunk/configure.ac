@@ -2,8 +2,8 @@
 # Library's "official" release version:
 
 m4_define(libgig_release_major, 4)
-m4_define(libgig_release_minor, 0)
-m4_define(libgig_release_build, 0.svn34)
+m4_define(libgig_release_minor, 1)
+m4_define(libgig_release_build, 0)
 
 
 AC_INIT([libgig],[libgig_release_major.libgig_release_minor.libgig_release_build])
@@ -26,7 +26,7 @@ AC_CONFIG_SRCDIR([configure.ac])
 #  6. If any interfaces have been removed since the last public release, then set age
 #     to 0.
 
-LIBGIG_LT_CURRENT=7
+LIBGIG_LT_CURRENT=8
 LIBGIG_LT_REVISION=0
 LIBGIG_LT_AGE=0
 LIBGIG_SHARED_VERSION_INFO="$LIBGIG_LT_CURRENT:$LIBGIG_LT_REVISION:$LIBGIG_LT_AGE"

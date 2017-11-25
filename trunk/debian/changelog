@@ -1,3 +1,10 @@
+libgig (4.1.0-1) unstable; urgency=low
+
+  * New release.
+  * libgig shared library (libgig.so) is now at version 8.0.0.
+
+ -- Christian Schoenebeck <cuse@users.sourceforge.net>  Sat, 25 Nov 2017 01:56:38 +0100
+
 libgig (4.0.0-1+svn33) unreleased; urgency=low
 
   * Fixed packaging error about invalid "Source-Version" substitution

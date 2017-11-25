@@ -5,7 +5,7 @@ Home
 
 Content
 =======
-  libgig actually consists of three parts:
+  libgig actually consists of three major parts:
 
   - RIFF classes (RIFF.h, RIFF.cpp): Provides convenient methods to parse and
                                      access arbitrary RIFF files.
@@ -15,7 +15,7 @@ Content
                                      data.
   - gig classes (gig.h, gig.cpp):    These are based on the DLS classes and
                                      provide the necessary extensions for
-                                     the Gigasampler file format.
+                                     the Gigasampler/GigaStudio file format.
 
   Despite its name, libgig also provides (since version 4.0.0) support for
   other sampler file formats as well:
@@ -28,6 +28,14 @@ Content
 
   - Akai classes (Akai.h):             Currently S1000, S01, S2000 and S3000
                                        series are supported.
+
+  Additionally libgig contains the following separate API:
+
+  - Serialization classes (Serialization.h, Serialization.cpp):
+                                       Framework to serialize and deserialize
+                                       the runtime state of native C++ objects
+                                       (for saving and restoring their states
+                                       as abstract data).
 
   Beside the actual library there are following example applications:
 
@@ -53,7 +61,7 @@ Content
 
 Requirements
 ============
-  POSIX systems (e.g. Linux, OS X):
+  POSIX systems (e.g. Linux, macOS):
   ---------------------------------
 
   You need at least to have libtool installed to be able to build the

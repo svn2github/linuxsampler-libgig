@@ -31,7 +31,7 @@ Public License can be found in `/usr/share/common-licenses/GPL'.
   libakai - C++ cross-platform akai sample disk reader
   Copyright (C) 2002-2003 Sébastien Métrot
 
-  Linux port by Christian Schoenebeck <cuse@users.sourceforge.net> 2003-2014
+  Linux port by Christian Schoenebeck <cuse@users.sourceforge.net> 2003-2017
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public

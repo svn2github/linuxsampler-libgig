@@ -1,4 +1,4 @@
-Version SVN trunk
+Version 4.1.0 (25 Nov 2017)
   * general changes:
     - removed 2 GB limitation when loading a gig or DLS file
     - using now native integer size where appropriate

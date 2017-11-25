@@ -5,7 +5,7 @@ EXTRA_DIST = changelog \
              control \
              copyright \
              rules \
-             libgig7.install \
+             libgig8.install \
              libgig-dev.install \
              libgig-dev.docs \
              libgig-dev.doc-base \

@@ -13,7 +13,6 @@ RIFF Part:
 DLS Part:
   - support for conditional chunks
   - check for ZSTR terminated strings in DLS::Info::LoadString()
-  - real support for 64 bit offsets (used by Gigasampler v3 files)
   - adding methods Articulator::AddArticulation() and
     Articulator::DeleteArticulation(Articulation* pArticulation) to allow
     creating and deleting DLS::Articulation objects

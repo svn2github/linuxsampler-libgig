@@ -1,3 +1,70 @@
+Version 4.1.0 (25 Nov 2017)
+
+  This release adds support for files much larger than 2 GB for GigaStudio /
+  Gigasampler (.gig), DLS, as well as for RIFF files in general. This file size
+  limitation existed for a very long time due to the RIFF format's historical,
+  internal 32 bit file offsets. To circumvent this file size limitation the
+  concept of so called "extension files" was added in the past to the
+  GigaStudio format, which means that the GigaStudio instrument editor splitted
+  the respective overall instrument file into a set of files (.gig, .gx01,
+  .gx02, ...), each being max. 2 GB in size, and all of them were expected to be
+  located in the same directory for the sampler to load the entire large
+  instrument successfully. libgig always supported only reading such gig
+  extension files, however libgig never supported to create .gig files with
+  extension files, nor did it support modifying existing ones. In this release
+  it was necessary to finally get rid of this overall file size limitation in
+  libgig. Now when that concept of extension files was introduced years ago, it
+  made sense at that point, because there were still many systems out there
+  which still had no support for large files (on either OS or file system
+  level). However today even on low end mobile devices support for large files
+  is already a broad standard. Accordingly instead of adding write support for
+  extension files in libgig, the problem was addressed at its root by
+  transparently using appropriate, automatic file offset sizes. So when writing
+  .gig/DLS/RIFF files smaller than 2 GB there are still 32 bit file offsets
+  being used by libgig. Accordingly such files are still backward compatible
+  with older software. However if the overall file size to be written is 2 GB or
+  larger, then 64 bit file offsets are automatically used by libgig instead.
+  Note though that due to that circumstance such files >= 2 GB are not backward
+  compatible with older versions of libgig, nor could they be loaded with the
+  original GigaStudio software.
+
+  Another major new feature in this libgig release is the entirely new
+  serialization API (Serialization.h) which provides a powerful and easy way
+  to serialize and deserialize an arbitrary set of native C++ objects into an
+  abstract data stream. Which means you can simply save the entire runtime state
+  of an application to a file or send it as data over "wire" (i.e. over network
+  or to another process) and restore that runtime state from that data there at
+  any time. In contrast to other C++ serialization frameworks out there, this
+  framework provides two major benefits:
+
+  1. This serialization framework is designed to be very robust regarding
+     potential versioning changes of the native C++ classes being
+     (de)serialized. So even if the C++ classes have seen massive software
+     changes between the point where they were serialized and the point where
+     they are to be deserialized; for example if class member variables of
+     serialized C++ objects were renamed in meantime, or if variable offsets, or
+     variables' data types had been changed, then the deserialization algorithm
+     can still cope with such common software changes automatically in many
+     cases, that is as long as the deserialization algorithm can "guess" what
+     the changes were exactly. If the serialization framework is unable to
+     automatically detect the precise software changes, then it will abort the
+     deserialization task with an exception and an error message stating that
+     the software versions are incompatible.
+
+  2. This serialization framework supports "partial" deserialization. That
+     means it not only allows to restore an entire runtime state, but it also
+     allows to only restore an arbitrary desired subset of information
+     from the previously serialized data stream, while leaving all other data
+     of the running C++ objects untouched. The serialization framework also
+     incorporates a reflection API which allows applications to implement
+     convenient editors on top of such serialized data, i.e. allowing end users
+     to pick or alter specific information within the serialized data.
+
+  The new Serialization framework is already embedded into the gig classes of
+  libgig, and it is used as basis for the new powerful macro features in the
+  gigedit instrument editor application. Refer to the release notes of
+  gigedit 1.1.0 for more information about those new macro features in gigedit.
+
 Version 4.0.0 (14 Jul 2015)
 
   This major release of libgig adds support for other file formats:
