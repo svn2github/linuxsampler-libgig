@@ -21,6 +21,10 @@
  *   MA  02111-1307  USA                                                   *
  ***************************************************************************/
 
+// enable implementation specific declarations in Serialization.h required to
+// build this C++ unit, which should be ignored in the public API though
+#define LIBGIG_SERIALIZATION_INTERNAL 1
+
 #include "Serialization.h"
 
 #include <iostream>
@@ -1414,7 +1418,7 @@ namespace Serialization {
         return (time_t) i;
     }
 
-    DataType _popDataTypeBlob(const char*& p, const char* end) {
+    static DataType _popDataTypeBlob(const char*& p, const char* end) {
         _Blob blob = _decodeBlob(p, end);
         p   = blob.p;
         end = blob.end;

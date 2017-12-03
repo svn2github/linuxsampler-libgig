@@ -323,6 +323,7 @@ namespace Serialization {
      */
     typedef std::vector<UID> UIDChain;
 
+#if LIBGIG_SERIALIZATION_INTERNAL
     // prototyping of private internal friend functions
     static String _encodePrimitiveValue(const Object& obj);
     static DataType _popDataTypeBlob(const char*& p, const char* end);
@@ -333,6 +334,7 @@ namespace Serialization {
     //  |
     template<typename T>
     static T _primitiveObjectValueToNumber(const Object& obj);
+#endif // LIBGIG_SERIALIZATION_INTERNAL
 
     /** @brief Abstract reflection of a native C++ data type.
      *
@@ -455,7 +457,9 @@ namespace Serialization {
         int m_size;
         bool m_isPointer;
 
+#if LIBGIG_SERIALIZATION_INTERNAL
         friend DataType _popDataTypeBlob(const char*& p, const char* end);
+#endif
         friend class Archive;
     };
 
@@ -505,7 +509,9 @@ namespace Serialization {
         String m_name;
         DataType m_type;
 
+#if LIBGIG_SERIALIZATION_INTERNAL
         friend Member _popMemberBlob(const char*& p, const char* end);
+#endif
     };
 
     /** @brief Abstract reflection of some native serialized C/C++ data.
@@ -571,13 +577,15 @@ namespace Serialization {
         RawData m_data;
         std::vector<Member> m_members;
 
+#if LIBGIG_SERIALIZATION_INTERNAL
         friend String _encodePrimitiveValue(const Object& obj);
         friend Object _popObjectBlob(const char*& p, const char* end);
         friend void _popPrimitiveValue(const char*& p, const char* end, Object& obj);
         friend String _primitiveObjectValueToString(const Object& obj);
-
+        // |
         template<typename T>
         friend T _primitiveObjectValueToNumber(const Object& obj);
+#endif // LIBGIG_SERIALIZATION_INTERNAL
 
         friend class Archive;
     };

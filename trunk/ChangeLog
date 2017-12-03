@@ -1,3 +1,9 @@
+Version SVN trunk (?)
+
+  * src/Serialization.cpp, src/Serialization.h:
+    - Hide pure internal declarations from header file to avoid numerous
+      compiler warnings when building and linking against the public API.
+
 Version 4.1.0 (25 Nov 2017)
   * general changes:
     - removed 2 GB limitation when loading a gig or DLS file
