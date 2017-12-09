@@ -120,9 +120,9 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(loop_type_t,
-        loop_type_normal        = 0x00000000,  ///< Loop forward (normal)
-        loop_type_bidirectional = 0x00000001,  ///< Alternating loop (forward/backward, also known as Ping Pong)
-        loop_type_backward      = 0x00000002   ///< Loop backward (reverse)
+        loop_type_normal        = 0x00000000,  /**< Loop forward (normal) */
+        loop_type_bidirectional = 0x00000001,  /**< Alternating loop (forward/backward, also known as Ping Pong) */
+        loop_type_backward      = 0x00000002   /**< Loop backward (reverse) */
     );
 
     /** Society of Motion Pictures and Television E time format.
@@ -130,11 +130,11 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(smpte_format_t,
-        smpte_format_no_offset          = 0x00000000,  ///< no SMPTE offset
-        smpte_format_24_frames          = 0x00000018,  ///< 24 frames per second
-        smpte_format_25_frames          = 0x00000019,  ///< 25 frames per second
-        smpte_format_30_frames_dropping = 0x0000001D,  ///< 30 frames per second with frame dropping (30 drop)
-        smpte_format_30_frames          = 0x0000001E   ///< 30 frames per second
+        smpte_format_no_offset          = 0x00000000,  /**< no SMPTE offset */
+        smpte_format_24_frames          = 0x00000018,  /**< 24 frames per second */
+        smpte_format_25_frames          = 0x00000019,  /**< 25 frames per second */
+        smpte_format_30_frames_dropping = 0x0000001D,  /**< 30 frames per second with frame dropping (30 drop) */
+        smpte_format_30_frames          = 0x0000001E   /**< 30 frames per second */
     );
 
     /** Defines the shape of a function graph.
@@ -142,10 +142,10 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(curve_type_t,
-        curve_type_nonlinear = 0,
-        curve_type_linear    = 1,
-        curve_type_special   = 2,
-        curve_type_unknown   = 0xffffffff
+        curve_type_nonlinear = 0,          /**< Non-linear curve type. */
+        curve_type_linear    = 1,          /**< Linear curve type. */
+        curve_type_special   = 2,          /**< Special curve type. */
+        curve_type_unknown   = 0xffffffff  /**< Unknown curve type. */
     );
 
     /** Dimensions allow to bypass one of the following controllers.
@@ -153,9 +153,9 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(dim_bypass_ctrl_t,
-        dim_bypass_ctrl_none,
-        dim_bypass_ctrl_94,   ///< Effect 4 Depth (MIDI Controller 94)
-        dim_bypass_ctrl_95    ///< Effect 5 Depth (MIDI Controller 95)
+        dim_bypass_ctrl_none, /**< No controller bypass. */
+        dim_bypass_ctrl_94,   /**< Effect 4 Depth (MIDI Controller 94) */
+        dim_bypass_ctrl_95    /**< Effect 5 Depth (MIDI Controller 95) */
     );
 
     /** Defines how LFO3 is controlled by.
@@ -163,11 +163,11 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(lfo3_ctrl_t,
-        lfo3_ctrl_internal            = 0x00, ///< Only internally controlled.
-        lfo3_ctrl_modwheel            = 0x01, ///< Only controlled by external modulation wheel.
-        lfo3_ctrl_aftertouch          = 0x02, ///< Only controlled by aftertouch controller.
-        lfo3_ctrl_internal_modwheel   = 0x03, ///< Controlled internally and by external modulation wheel.
-        lfo3_ctrl_internal_aftertouch = 0x04  ///< Controlled internally and by aftertouch controller.
+        lfo3_ctrl_internal            = 0x00, /**< Only internally controlled. */
+        lfo3_ctrl_modwheel            = 0x01, /**< Only controlled by external modulation wheel. */
+        lfo3_ctrl_aftertouch          = 0x02, /**< Only controlled by aftertouch controller. */
+        lfo3_ctrl_internal_modwheel   = 0x03, /**< Controlled internally and by external modulation wheel. */
+        lfo3_ctrl_internal_aftertouch = 0x04  /**< Controlled internally and by aftertouch controller. */
     );
 
     /** Defines how LFO2 is controlled by.
@@ -175,11 +175,11 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(lfo2_ctrl_t,
-        lfo2_ctrl_internal            = 0x00, ///< Only internally controlled.
-        lfo2_ctrl_modwheel            = 0x01, ///< Only controlled by external modulation wheel.
-        lfo2_ctrl_foot                = 0x02, ///< Only controlled by external foot controller.
-        lfo2_ctrl_internal_modwheel   = 0x03, ///< Controlled internally and by external modulation wheel.
-        lfo2_ctrl_internal_foot       = 0x04  ///< Controlled internally and by external foot controller.
+        lfo2_ctrl_internal            = 0x00, /**< Only internally controlled. */
+        lfo2_ctrl_modwheel            = 0x01, /**< Only controlled by external modulation wheel. */
+        lfo2_ctrl_foot                = 0x02, /**< Only controlled by external foot controller. */
+        lfo2_ctrl_internal_modwheel   = 0x03, /**< Controlled internally and by external modulation wheel. */
+        lfo2_ctrl_internal_foot       = 0x04  /**< Controlled internally and by external foot controller. */
     );
 
     /** Defines how LFO1 is controlled by.
@@ -187,11 +187,11 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(lfo1_ctrl_t,
-        lfo1_ctrl_internal            = 0x00, ///< Only internally controlled.
-        lfo1_ctrl_modwheel            = 0x01, ///< Only controlled by external modulation wheel.
-        lfo1_ctrl_breath              = 0x02, ///< Only controlled by external breath controller.
-        lfo1_ctrl_internal_modwheel   = 0x03, ///< Controlled internally and by external modulation wheel.
-        lfo1_ctrl_internal_breath     = 0x04  ///< Controlled internally and by external breath controller.
+        lfo1_ctrl_internal            = 0x00, /**< Only internally controlled. */
+        lfo1_ctrl_modwheel            = 0x01, /**< Only controlled by external modulation wheel. */
+        lfo1_ctrl_breath              = 0x02, /**< Only controlled by external breath controller. */
+        lfo1_ctrl_internal_modwheel   = 0x03, /**< Controlled internally and by external modulation wheel. */
+        lfo1_ctrl_internal_breath     = 0x04  /**< Controlled internally and by external breath controller. */
     );
 
     /** Defines how the filter cutoff frequency is controlled by.
@@ -199,18 +199,18 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(vcf_cutoff_ctrl_t,
-        vcf_cutoff_ctrl_none         = 0x00,
-        vcf_cutoff_ctrl_none2        = 0x01,  ///< The difference between none and none2 is unknown
-        vcf_cutoff_ctrl_modwheel     = 0x81,  ///< Modulation Wheel (MIDI Controller 1)
-        vcf_cutoff_ctrl_effect1      = 0x8c,  ///< Effect Controller 1 (Coarse, MIDI Controller 12)
-        vcf_cutoff_ctrl_effect2      = 0x8d,  ///< Effect Controller 2 (Coarse, MIDI Controller 13)
-        vcf_cutoff_ctrl_breath       = 0x82,  ///< Breath Controller (Coarse, MIDI Controller 2)
-        vcf_cutoff_ctrl_foot         = 0x84,  ///< Foot Pedal (Coarse, MIDI Controller 4)
-        vcf_cutoff_ctrl_sustainpedal = 0xc0,  ///< Sustain Pedal (MIDI Controller 64)
-        vcf_cutoff_ctrl_softpedal    = 0xc3,  ///< Soft Pedal (MIDI Controller 67)
-        vcf_cutoff_ctrl_genpurpose7  = 0xd2,  ///< General Purpose Controller 7 (Button, MIDI Controller 82)
-        vcf_cutoff_ctrl_genpurpose8  = 0xd3,  ///< General Purpose Controller 8 (Button, MIDI Controller 83)
-        vcf_cutoff_ctrl_aftertouch   = 0x80   ///< Key Pressure
+        vcf_cutoff_ctrl_none         = 0x00,  /**< No MIDI controller assigned for filter cutoff frequency. */
+        vcf_cutoff_ctrl_none2        = 0x01,  /**< The difference between none and none2 is unknown */
+        vcf_cutoff_ctrl_modwheel     = 0x81,  /**< Modulation Wheel (MIDI Controller 1) */
+        vcf_cutoff_ctrl_effect1      = 0x8c,  /**< Effect Controller 1 (Coarse, MIDI Controller 12) */
+        vcf_cutoff_ctrl_effect2      = 0x8d,  /**< Effect Controller 2 (Coarse, MIDI Controller 13) */
+        vcf_cutoff_ctrl_breath       = 0x82,  /**< Breath Controller (Coarse, MIDI Controller 2) */
+        vcf_cutoff_ctrl_foot         = 0x84,  /**< Foot Pedal (Coarse, MIDI Controller 4) */
+        vcf_cutoff_ctrl_sustainpedal = 0xc0,  /**< Sustain Pedal (MIDI Controller 64) */
+        vcf_cutoff_ctrl_softpedal    = 0xc3,  /**< Soft Pedal (MIDI Controller 67) */
+        vcf_cutoff_ctrl_genpurpose7  = 0xd2,  /**< General Purpose Controller 7 (Button, MIDI Controller 82) */
+        vcf_cutoff_ctrl_genpurpose8  = 0xd3,  /**< General Purpose Controller 8 (Button, MIDI Controller 83) */
+        vcf_cutoff_ctrl_aftertouch   = 0x80   /**< Key Pressure */
     );
 
     /** Defines how the filter resonance is controlled by.
@@ -218,11 +218,11 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(vcf_res_ctrl_t,
-        vcf_res_ctrl_none        = 0xffffffff,
-        vcf_res_ctrl_genpurpose3 = 0,           ///< General Purpose Controller 3 (Slider, MIDI Controller 18)
-        vcf_res_ctrl_genpurpose4 = 1,           ///< General Purpose Controller 4 (Slider, MIDI Controller 19)
-        vcf_res_ctrl_genpurpose5 = 2,           ///< General Purpose Controller 5 (Button, MIDI Controller 80)
-        vcf_res_ctrl_genpurpose6 = 3            ///< General Purpose Controller 6 (Button, MIDI Controller 81)
+        vcf_res_ctrl_none        = 0xffffffff,  /**< No MIDI controller assigned for filter resonance. */
+        vcf_res_ctrl_genpurpose3 = 0,           /**< General Purpose Controller 3 (Slider, MIDI Controller 18) */
+        vcf_res_ctrl_genpurpose4 = 1,           /**< General Purpose Controller 4 (Slider, MIDI Controller 19) */
+        vcf_res_ctrl_genpurpose5 = 2,           /**< General Purpose Controller 5 (Button, MIDI Controller 80) */
+        vcf_res_ctrl_genpurpose6 = 3            /**< General Purpose Controller 6 (Button, MIDI Controller 81) */
     );
 
     /**
@@ -239,10 +239,10 @@ namespace gig {
          * @see enumCount(), enumKey(), enumKeys(), enumValue()
          */
         GIG_DECLARE_ENUM(type_t,
-            type_none              = 0x00, ///< No controller defined
-            type_channelaftertouch = 0x2f, ///< Channel Key Pressure
-            type_velocity          = 0xff, ///< Key Velocity
-            type_controlchange     = 0xfe  ///< Ordinary MIDI control change controller, see field 'controller_number'
+            type_none              = 0x00, /**< No controller defined */
+            type_channelaftertouch = 0x2f, /**< Channel Key Pressure */
+            type_velocity          = 0xff, /**< Key Velocity */
+            type_controlchange     = 0xfe  /**< Ordinary MIDI control change controller, see field 'controller_number' */
         );
 
         type_t type;              ///< Controller type
@@ -282,40 +282,40 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(dimension_t,
-        dimension_none              = 0x00, ///< Dimension not in use.
-        dimension_samplechannel     = 0x80, ///< If used sample has more than one channel (thus is not mono).
-        dimension_layer             = 0x81, ///< For layering of up to 8 instruments (and eventually crossfading of 2 or 4 layers).
-        dimension_velocity          = 0x82, ///< Key Velocity (this is the only dimension in gig2 where the ranges can exactly be defined).
-        dimension_channelaftertouch = 0x83, ///< Channel Key Pressure
-        dimension_releasetrigger    = 0x84, ///< Special dimension for triggering samples on releasing a key.
-        dimension_keyboard          = 0x85, ///< Dimension for keyswitching
-        dimension_roundrobin        = 0x86, ///< Different samples triggered each time a note is played, dimension regions selected in sequence
-        dimension_random            = 0x87, ///< Different samples triggered each time a note is played, random order
-        dimension_smartmidi         = 0x88, ///< For MIDI tools like legato and repetition mode
-        dimension_roundrobinkeyboard = 0x89, ///< Different samples triggered each time a note is played, any key advances the counter
-        dimension_modwheel          = 0x01, ///< Modulation Wheel (MIDI Controller 1)
-        dimension_breath            = 0x02, ///< Breath Controller (Coarse, MIDI Controller 2)
-        dimension_foot              = 0x04, ///< Foot Pedal (Coarse, MIDI Controller 4)
-        dimension_portamentotime    = 0x05, ///< Portamento Time (Coarse, MIDI Controller 5)
-        dimension_effect1           = 0x0c, ///< Effect Controller 1 (Coarse, MIDI Controller 12)
-        dimension_effect2           = 0x0d, ///< Effect Controller 2 (Coarse, MIDI Controller 13)
-        dimension_genpurpose1       = 0x10, ///< General Purpose Controller 1 (Slider, MIDI Controller 16)
-        dimension_genpurpose2       = 0x11, ///< General Purpose Controller 2 (Slider, MIDI Controller 17)
-        dimension_genpurpose3       = 0x12, ///< General Purpose Controller 3 (Slider, MIDI Controller 18)
-        dimension_genpurpose4       = 0x13, ///< General Purpose Controller 4 (Slider, MIDI Controller 19)
-        dimension_sustainpedal      = 0x40, ///< Sustain Pedal (MIDI Controller 64)
-        dimension_portamento        = 0x41, ///< Portamento (MIDI Controller 65)
-        dimension_sostenutopedal    = 0x42, ///< Sostenuto Pedal (MIDI Controller 66)
-        dimension_softpedal         = 0x43, ///< Soft Pedal (MIDI Controller 67)
-        dimension_genpurpose5       = 0x30, ///< General Purpose Controller 5 (Button, MIDI Controller 80)
-        dimension_genpurpose6       = 0x31, ///< General Purpose Controller 6 (Button, MIDI Controller 81)
-        dimension_genpurpose7       = 0x32, ///< General Purpose Controller 7 (Button, MIDI Controller 82)
-        dimension_genpurpose8       = 0x33, ///< General Purpose Controller 8 (Button, MIDI Controller 83)
-        dimension_effect1depth      = 0x5b, ///< Effect 1 Depth (MIDI Controller 91)
-        dimension_effect2depth      = 0x5c, ///< Effect 2 Depth (MIDI Controller 92)
-        dimension_effect3depth      = 0x5d, ///< Effect 3 Depth (MIDI Controller 93)
-        dimension_effect4depth      = 0x5e, ///< Effect 4 Depth (MIDI Controller 94)
-        dimension_effect5depth      = 0x5f  ///< Effect 5 Depth (MIDI Controller 95)
+        dimension_none              = 0x00, /**< Dimension not in use. */
+        dimension_samplechannel     = 0x80, /**< If used sample has more than one channel (thus is not mono). */
+        dimension_layer             = 0x81, /**< For layering of up to 8 instruments (and eventually crossfading of 2 or 4 layers). */
+        dimension_velocity          = 0x82, /**< Key Velocity (this is the only dimension in gig2 where the ranges can exactly be defined). */
+        dimension_channelaftertouch = 0x83, /**< Channel Key Pressure */
+        dimension_releasetrigger    = 0x84, /**< Special dimension for triggering samples on releasing a key. */
+        dimension_keyboard          = 0x85, /**< Dimension for keyswitching */
+        dimension_roundrobin        = 0x86, /**< Different samples triggered each time a note is played, dimension regions selected in sequence */
+        dimension_random            = 0x87, /**< Different samples triggered each time a note is played, random order */
+        dimension_smartmidi         = 0x88, /**< For MIDI tools like legato and repetition mode */
+        dimension_roundrobinkeyboard = 0x89, /**< Different samples triggered each time a note is played, any key advances the counter */
+        dimension_modwheel          = 0x01, /**< Modulation Wheel (MIDI Controller 1) */
+        dimension_breath            = 0x02, /**< Breath Controller (Coarse, MIDI Controller 2) */
+        dimension_foot              = 0x04, /**< Foot Pedal (Coarse, MIDI Controller 4) */
+        dimension_portamentotime    = 0x05, /**< Portamento Time (Coarse, MIDI Controller 5) */
+        dimension_effect1           = 0x0c, /**< Effect Controller 1 (Coarse, MIDI Controller 12) */
+        dimension_effect2           = 0x0d, /**< Effect Controller 2 (Coarse, MIDI Controller 13) */
+        dimension_genpurpose1       = 0x10, /**< General Purpose Controller 1 (Slider, MIDI Controller 16) */
+        dimension_genpurpose2       = 0x11, /**< General Purpose Controller 2 (Slider, MIDI Controller 17) */
+        dimension_genpurpose3       = 0x12, /**< General Purpose Controller 3 (Slider, MIDI Controller 18) */
+        dimension_genpurpose4       = 0x13, /**< General Purpose Controller 4 (Slider, MIDI Controller 19) */
+        dimension_sustainpedal      = 0x40, /**< Sustain Pedal (MIDI Controller 64) */
+        dimension_portamento        = 0x41, /**< Portamento (MIDI Controller 65) */
+        dimension_sostenutopedal    = 0x42, /**< Sostenuto Pedal (MIDI Controller 66) */
+        dimension_softpedal         = 0x43, /**< Soft Pedal (MIDI Controller 67) */
+        dimension_genpurpose5       = 0x30, /**< General Purpose Controller 5 (Button, MIDI Controller 80) */
+        dimension_genpurpose6       = 0x31, /**< General Purpose Controller 6 (Button, MIDI Controller 81) */
+        dimension_genpurpose7       = 0x32, /**< General Purpose Controller 7 (Button, MIDI Controller 82) */
+        dimension_genpurpose8       = 0x33, /**< General Purpose Controller 8 (Button, MIDI Controller 83) */
+        dimension_effect1depth      = 0x5b, /**< Effect 1 Depth (MIDI Controller 91) */
+        dimension_effect2depth      = 0x5c, /**< Effect 2 Depth (MIDI Controller 92) */
+        dimension_effect3depth      = 0x5d, /**< Effect 3 Depth (MIDI Controller 93) */
+        dimension_effect4depth      = 0x5e, /**< Effect 4 Depth (MIDI Controller 94) */
+        dimension_effect5depth      = 0x5f  /**< Effect 5 Depth (MIDI Controller 95) */
     );
 
     /**
@@ -325,8 +325,8 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(split_type_t,
-        split_type_normal,         ///< dimension value between 0-127
-        split_type_bit             ///< dimension values are already the sought bit number
+        split_type_normal,         /**< dimension value between 0-127 */
+        split_type_bit             /**< dimension values are already the sought bit number */
     );
 
     /** General dimension definition. */
@@ -343,11 +343,11 @@ namespace gig {
      * @see enumCount(), enumKey(), enumKeys(), enumValue()
      */
     GIG_DECLARE_ENUM(vcf_type_t,
-        vcf_type_lowpass      = 0x00,
-        vcf_type_lowpassturbo = 0xff, ///< More poles than normal lowpass
-        vcf_type_bandpass     = 0x01,
-        vcf_type_highpass     = 0x02,
-        vcf_type_bandreject   = 0x03
+        vcf_type_lowpass      = 0x00, /**< Standard lowpass filter type. */
+        vcf_type_lowpassturbo = 0xff, /**< More poles than normal lowpass. */
+        vcf_type_bandpass     = 0x01, /**< Bandpass filter type. */
+        vcf_type_highpass     = 0x02, /**< Highpass filter type. */
+        vcf_type_bandreject   = 0x03  /**< Highpass filter type. */
     );
 
     /**

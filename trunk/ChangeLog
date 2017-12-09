@@ -1,5 +1,12 @@
 Version SVN trunk (?)
 
+  * src/gig.cpp, src/gig.h:
+    - Fixed Doxygen API comments for enum types (currently latest Doxygen
+      [v1.8.13] only supports C comments in macro arguments expansion, but
+      not C++ comments; see <FindDefineArgs> lexer rules in src/pre.l of
+      the Doxygen source code, which currently also filter out new line
+      \n chars).
+
   * src/Serialization.cpp, src/Serialization.h:
     - Hide pure internal declarations from header file to avoid numerous
       compiler warnings when building and linking against the public API.

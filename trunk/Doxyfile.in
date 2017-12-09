@@ -183,14 +183,16 @@ PERLMOD_MAKEVAR_PREFIX =
 #---------------------------------------------------------------------------
 ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
-EXPAND_ONLY_PREDEF     = YES
+#FIXME: See PREDEFINED comment below.
+EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  =
-PREDEFINED             = "GIG_DECLARE_ENUM(type,...)=enum type { __VA_ARGS__ }" \
-                         "DLS_DECLARE_ENUM(type,...)=enum type { __VA_ARGS__ }" \
-                         "RIFF_DECLARE_ENUM(type,...)=enum type { __VA_ARGS__ }" \
-                         "HAVE_RTTI=1"
+#FIXME: For some reason Doxygen (1.8.13) does not accept variadic macros here, so commented and sing EXPAND_ONLY_PREDEF=NO instead for now.
+#PREDEFINED             = "GIG_DECLARE_ENUM(type,...)=enum type { __VA_ARGS__ }" \
+#                         "DLS_DECLARE_ENUM(type,...)=enum type { __VA_ARGS__ }" \
+#                         "RIFF_DECLARE_ENUM(type,...)=enum type { __VA_ARGS__ }" \
+#                         "HAVE_RTTI=1"
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
