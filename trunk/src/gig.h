@@ -347,7 +347,7 @@ namespace gig {
         vcf_type_lowpassturbo = 0xff, /**< More poles than normal lowpass. */
         vcf_type_bandpass     = 0x01, /**< Bandpass filter type. */
         vcf_type_highpass     = 0x02, /**< Highpass filter type. */
-        vcf_type_bandreject   = 0x03  /**< Highpass filter type. */
+        vcf_type_bandreject   = 0x03  /**< Band reject filter type. */
     );
 
     /**
