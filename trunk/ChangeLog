@@ -11,6 +11,10 @@ Version SVN trunk (?)
     - Hide pure internal declarations from header file to avoid numerous
       compiler warnings when building and linking against the public API.
 
+  * src/RIFF.cpp, src/RIFF.h:
+    - Fix: Calling File::SetMode() left an undefined file handle on Windows and
+      caused a resource leak
+
 Version 4.1.0 (25 Nov 2017)
   * general changes:
     - removed 2 GB limitation when loading a gig or DLS file

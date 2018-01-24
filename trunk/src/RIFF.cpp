@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2018 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
@@ -1812,14 +1812,16 @@ namespace RIFF {
                     #if POSIX
                     if (hFileRead)  close(hFileRead);
                     if (hFileWrite) close(hFileWrite);
+                    hFileRead = hFileWrite = 0;
                     #elif defined(WIN32)
                     if (hFileRead  != INVALID_HANDLE_VALUE) CloseHandle(hFileRead);
                     if (hFileWrite != INVALID_HANDLE_VALUE) CloseHandle(hFileWrite);
+                    hFileRead = hFileWrite = INVALID_HANDLE_VALUE;
                     #else
                     if (hFileRead)  fclose(hFileRead);
                     if (hFileWrite) fclose(hFileWrite);
+                    hFileRead = hFileWrite = NULL;
                     #endif
-                    hFileRead = hFileWrite = 0;
                     break;
                 default:
                     throw Exception("Unknown file access mode");
