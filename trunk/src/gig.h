@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2018 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
@@ -1342,12 +1342,14 @@ namespace gig {
             Sample*     GetNextSample();      ///< Returns a pointer to the next <i>Sample</i> object of the file, <i>NULL</i> otherwise.
             Sample*     GetSample(uint index);
             Sample*     AddSample();
+            size_t      CountSamples();
             void        DeleteSample(Sample* pSample);
             Instrument* GetFirstInstrument(); ///< Returns a pointer to the first <i>Instrument</i> object of the file, <i>NULL</i> otherwise.
             Instrument* GetNextInstrument();  ///< Returns a pointer to the next <i>Instrument</i> object of the file, <i>NULL</i> otherwise.
             Instrument* GetInstrument(uint index, progress_t* pProgress = NULL);
             Instrument* AddInstrument();
             Instrument* AddDuplicateInstrument(const Instrument* orig);
+            size_t      CountInstruments();
             void        DeleteInstrument(Instrument* pInstrument);
             Group*      GetFirstGroup(); ///< Returns a pointer to the first <i>Group</i> object of the file, <i>NULL</i> otherwise.
             Group*      GetNextGroup();  ///< Returns a pointer to the next <i>Group</i> object of the file, <i>NULL</i> otherwise.

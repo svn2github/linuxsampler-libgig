@@ -6,6 +6,8 @@ Version SVN trunk (?)
       not C++ comments; see <FindDefineArgs> lexer rules in src/pre.l of
       the Doxygen source code, which currently also filter out new line
       \n chars).
+    - Added new method File::CountSamples().
+    - Added new method File::CountInstruments().
 
   * src/Serialization.cpp, src/Serialization.h:
     - Hide pure internal declarations from header file to avoid numerous

@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2018 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
@@ -5590,6 +5590,20 @@ namespace {
         return static_cast<gig::Sample*>( *it );
     }
 
+    /**
+     * Returns the total amount of samples of this gig file.
+     *
+     * Note that this method might block for a long time in case it is required
+     * to load the sample info for the first time.
+     *
+     * @returns total amount of samples
+     */
+    size_t File::CountSamples() {
+        if (!pSamples) LoadSamples();
+        if (!pSamples) return 0;
+        return pSamples->size();
+    }
+
     /** @brief Add a new sample.
      *
      * This will create a new Sample object for the gig file. You have to
@@ -5722,6 +5736,20 @@ namespace {
         if (!pInstruments) return NULL;
         InstrumentsIterator++;
         return static_cast<gig::Instrument*>( (InstrumentsIterator != pInstruments->end()) ? *InstrumentsIterator : NULL );
+    }
+
+    /**
+     * Returns the total amount of instruments of this gig file.
+     *
+     * Note that this method might block for a long time in case it is required
+     * to load the instruments info for the first time.
+     *
+     * @returns total amount of instruments
+     */
+    size_t File::CountInstruments() {
+        if (!pInstruments) LoadInstruments();
+        if (!pInstruments) return 0;
+        return pInstruments->size();
     }
 
     /**
