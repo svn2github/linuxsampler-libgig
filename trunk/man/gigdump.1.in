@@ -1,4 +1,4 @@
-.TH "gigdump" "1" "21 Sep 2016" "libgig @VERSION@" "libgig tools"
+.TH "gigdump" "1" "08 May 2018" "libgig @VERSION@" "libgig tools"
 .SH NAME
 gigdump \- List information about a Gigasampler (.gig) file.
 .SH SYNOPSIS
@@ -12,6 +12,9 @@ information about their properties and settings.
 .TP
 .B \ GIGFILE
 filename of the Gigasampler file
+.TP
+.B \ --instrument-names
+Only list instrument names and their index number.
 .TP
 .B \ --rebuild-checksums
 Rebuild checksum table for all samples. Read description of

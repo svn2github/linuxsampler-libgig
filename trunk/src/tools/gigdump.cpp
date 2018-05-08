@@ -2,7 +2,7 @@
  *                                                                         *
  *   libgig - C++ cross-platform Gigasampler format file access library    *
  *                                                                         *
- *   Copyright (C) 2003-2017 by Christian Schoenebeck                      *
+ *   Copyright (C) 2003-2018 by Christian Schoenebeck                      *
  *                              <cuse@users.sourceforge.net>               *
  *                                                                         *
  *   This program is part of libgig.                                       *
@@ -37,11 +37,12 @@ using namespace std;
 
 string Revision();
 void PrintVersion();
-void PrintFileInformations(gig::File* gig);
+void PrintFileInformation(gig::File* gig);
 void PrintGroups(gig::File* gig);
 void PrintSamples(gig::File* gig);
 void PrintScripts(gig::File* gig);
 void PrintInstruments(gig::File* gig);
+void PrintInstrumentNamesOnly(gig::File* gig);
 void PrintRegions(gig::Instrument* instr);
 void PrintUsage();
 void PrintDimensionRegions(gig::Region* rgn);
@@ -64,6 +65,7 @@ int main(int argc, char *argv[])
 {
     bool bVerify = false;
     bool bRebuildChecksums = false;
+    bool bInstrumentNamesOnly = false;
 
     if (argc <= 1) {
         PrintUsage();
@@ -86,6 +88,8 @@ int main(int argc, char *argv[])
             bVerify = true;
         } else if (opt == "--rebuild-checksums") {
             bRebuildChecksums = true;
+        } else if (opt == "--instrument-names") {
+            bInstrumentNamesOnly = true;
         } else {
             cerr << "Unknown option '" << opt << "'" << endl;
             cerr << endl;
@@ -116,15 +120,19 @@ int main(int argc, char *argv[])
             if (OK) cout << "All checks passed successfully! :-)\n";
             return (OK) ? EXIT_SUCCESS : EXIT_FAILURE;
         } else {
-            PrintFileInformations(gig);
-            cout << endl;
-            PrintGroups(gig);
-            cout << endl;
-            PrintSamples(gig);
-            cout << endl;
-            PrintScripts(gig);
-            cout << endl;
-            PrintInstruments(gig);
+            if (bInstrumentNamesOnly) {
+                PrintInstrumentNamesOnly(gig);
+            } else {
+                PrintFileInformation(gig);
+                cout << endl;
+                PrintGroups(gig);
+                cout << endl;
+                PrintSamples(gig);
+                cout << endl;
+                PrintScripts(gig);
+                cout << endl;
+                PrintInstruments(gig);
+            }
         }
         delete gig;
         delete riff;
@@ -141,7 +149,7 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-void PrintFileInformations(gig::File* gig) {
+void PrintFileInformation(gig::File* gig) {
     cout << "Global File Information:" << endl;
     cout << "    Total instruments: " << gig->Instruments << endl;
     if (gig->pVersion) {
@@ -291,6 +299,18 @@ void PrintInstruments(gig::File* gig) {
         PrintRegions(pInstrument);
 
         pInstrument = gig->GetNextInstrument();
+    }
+}
+
+void PrintInstrumentNamesOnly(gig::File* gig) {
+    int instruments = 0;
+    gig::Instrument* pInstrument = gig->GetFirstInstrument();
+    for (; pInstrument; pInstrument = gig->GetNextInstrument()) {
+        instruments++;
+        string name = pInstrument->pInfo->Name;
+        if (name == "") name = "<NO NAME>";
+        else            name = '\"' + name + '\"';
+        cout << "Instrument " << instruments << ") " << name << endl;
     }
 }
 
@@ -604,5 +624,7 @@ void PrintUsage() {
     cout << "	-v                   Print version and exit." << endl;
     cout << endl;
     cout << "   --verify             Checks raw wave data integrity of all samples." << endl;
+    cout << endl;
+    cout << "   --instrument-names   Print only instrument names." << endl;
     cout << endl;
 }
