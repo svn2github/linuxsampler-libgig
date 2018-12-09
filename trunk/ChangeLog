@@ -8,6 +8,9 @@ Version SVN trunk (?)
       \n chars).
     - Added new method File::CountSamples().
     - Added new method File::CountInstruments().
+    - Fixed gig v4 files falsely being handled as v2 format
+      (patch by Ivan Maguidhir).
+    - Added gig v4 version identifier (File::VERSION_4).
 
   * src/Serialization.cpp, src/Serialization.h:
     - Hide pure internal declarations from header file to avoid numerous

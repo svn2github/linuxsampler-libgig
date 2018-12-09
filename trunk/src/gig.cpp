@@ -468,7 +468,7 @@ namespace {
         TruncatedBits     = 0;
         if (Compressed) {
             uint32_t version = ewav->ReadInt32();
-            if (version == 3 && BitDepth == 24) {
+            if (version > 2 && BitDepth == 24) {
                 Dithered = ewav->ReadInt32();
                 ewav->SetPos(Channels == 2 ? 84 : 64);
                 TruncatedBits = ewav->ReadInt32();
@@ -1975,8 +1975,8 @@ namespace {
         RIFF::Chunk* _3ewa = pParentList->GetSubChunk(CHUNK_ID_3EWA);
         if (!_3ewa) {
             File* pFile = (File*) GetParent()->GetParent()->GetParent();
-            bool version3 = pFile->pVersion && pFile->pVersion->major == 3;
-            _3ewa = pParentList->AddSubChunk(CHUNK_ID_3EWA, version3 ? 148 : 140);
+            bool versiongt2 = pFile->pVersion && pFile->pVersion->major > 2;
+            _3ewa = pParentList->AddSubChunk(CHUNK_ID_3EWA, versiongt2 ? 148 : 140);
         }
         pData = (uint8_t*) _3ewa->LoadChunkData();
 
@@ -3208,7 +3208,7 @@ namespace {
         }
         Layers = 1;
         File* file = (File*) GetParent()->GetParent();
-        int dimensionBits = (file->pVersion && file->pVersion->major == 3) ? 8 : 5;
+        int dimensionBits = (file->pVersion && file->pVersion->major > 2) ? 8 : 5;
 
         // Actual Loading
 
@@ -3252,7 +3252,7 @@ namespace {
             UpdateVelocityTable();
 
             // jump to start of the wave pool indices (if not already there)
-            if (file->pVersion && file->pVersion->major == 3)
+            if (file->pVersion && file->pVersion->major > 2)
                 _3lnk->SetPos(68); // version 3 has a different 3lnk structure
             else
                 _3lnk->SetPos(44);
@@ -3311,14 +3311,14 @@ namespace {
         }
 
         File* pFile = (File*) GetParent()->GetParent();
-        bool version3 = pFile->pVersion && pFile->pVersion->major == 3;
-        const int iMaxDimensions =  version3 ? 8 : 5;
-        const int iMaxDimensionRegions = version3 ? 256 : 32;
+        bool versiongt2 = pFile->pVersion && pFile->pVersion->major > 2;
+        const int iMaxDimensions =  versiongt2 ? 8 : 5;
+        const int iMaxDimensionRegions = versiongt2 ? 256 : 32;
 
         // make sure '3lnk' chunk exists
         RIFF::Chunk* _3lnk = pCkRegion->GetSubChunk(CHUNK_ID_3LNK);
         if (!_3lnk) {
-            const int _3lnkChunkSize = version3 ? 1092 : 172;
+            const int _3lnkChunkSize = versiongt2 ? 1092 : 172;
             _3lnk = pCkRegion->AddSubChunk(CHUNK_ID_3LNK, _3lnkChunkSize);
             memset(_3lnk->LoadChunkData(), 0, _3lnkChunkSize);
 
@@ -3342,7 +3342,7 @@ namespace {
         }
 
         // update wave pool table in '3lnk' chunk
-        const int iWavePoolOffset = version3 ? 68 : 44;
+        const int iWavePoolOffset = versiongt2 ? 68 : 44;
         for (uint i = 0; i < iMaxDimensionRegions; i++) {
             int iWaveIndex = -1;
             if (i < DimensionRegions) {
@@ -3485,7 +3485,7 @@ namespace {
 
         // check if max. amount of dimensions reached
         File* file = (File*) GetParent()->GetParent();
-        const int iMaxDimensions = (file->pVersion && file->pVersion->major == 3) ? 8 : 5;
+        const int iMaxDimensions = (file->pVersion && file->pVersion->major > 2) ? 8 : 5;
         if (Dimensions >= iMaxDimensions)
             throw gig::Exception("Could not add new dimension, max. amount of " + ToString(iMaxDimensions) + " dimensions already reached");
         // check if max. amount of dimension bits reached
@@ -4817,7 +4817,7 @@ namespace {
             File* pFile = (File*) GetParent();
 
             // 3ewg is bigger in gig3, as it includes the iMIDI rules
-            int size = (pFile->pVersion && pFile->pVersion->major == 3) ? 16416 : 12;
+            int size = (pFile->pVersion && pFile->pVersion->major > 2) ? 16416 : 12;
             _3ewg = lart->AddSubChunk(CHUNK_ID_3EWG, size);
             memset(_3ewg->LoadChunkData(), 0, size);
         }
@@ -5399,7 +5399,7 @@ namespace {
         RIFF::List* _3gnl = _3gri->GetSubList(LIST_TYPE_3GNL);
         if (!_3gnl) _3gnl = _3gri->AddSubList(LIST_TYPE_3GNL);
 
-        if (!pNameChunk && pFile->pVersion && pFile->pVersion->major == 3) {
+        if (!pNameChunk && pFile->pVersion && pFile->pVersion->major > 2) {
             // v3 has a fixed list of 128 strings, find a free one
             for (RIFF::Chunk* ck = _3gnl->GetFirstSubChunk() ; ck ; ck = _3gnl->GetNextSubChunk()) {
                 if (strcmp(static_cast<char*>(ck->LoadChunkData()), "") == 0) {
@@ -5492,6 +5492,11 @@ namespace {
     /// Reflects Gigasampler file format version 3.0 (2003-03-31).
     const DLS::version_t File::VERSION_3 = {
         0, 3, 20030331 & 0xffff, 20030331 >> 16
+    };
+
+    /// Reflects Gigasampler file format version 4.0 (2007-10-12).
+    const DLS::version_t File::VERSION_4 = {
+        0, 4, 20071012 & 0xffff, 20071012 >> 16
     };
 
     static const DLS::Info::string_length_t _FileFixedStringLengths[] = {
@@ -6071,7 +6076,7 @@ namespace {
             _3crc = pRIFF->AddSubChunk(CHUNK_ID_3CRC, pSamples->size() * 8);
             // the order of einf and 3crc is not the same in v2 and v3
             RIFF::Chunk* einf = pRIFF->GetSubChunk(CHUNK_ID_EINF);
-            if (einf && pVersion && pVersion->major == 3) pRIFF->MoveSubChunk(_3crc, einf);
+            if (einf && pVersion && pVersion->major > 2) pRIFF->MoveSubChunk(_3crc, einf);
             bRequiresSave = true;
         } else if (_3crc->GetNewSize() != pSamples->size() * 8) {
             _3crc->Resize(pSamples->size() * 8);
@@ -6220,7 +6225,7 @@ namespace {
                 RIFF::Chunk* ck = lst3gnl->GetFirstSubChunk();
                 while (ck) {
                     if (ck->GetChunkID() == CHUNK_ID_3GNM) {
-                        if (pVersion && pVersion->major == 3 &&
+                        if (pVersion && pVersion->major > 2 &&
                             strcmp(static_cast<char*>(ck->LoadChunkData()), "") == 0) break;
 
                         pGroups->push_back(new Group(this, ck));
@@ -6396,7 +6401,7 @@ namespace {
 
             // v3: make sure the file has 128 3gnm chunks
             // (before updating the Group chunks)
-            if (pVersion && pVersion->major == 3) {
+            if (pVersion && pVersion->major > 2) {
                 RIFF::Chunk* _3gnm = _3gnl->GetFirstSubChunk();
                 for (int i = 0 ; i < 128 ; i++) {
                     if (i >= pGroups->size()) ::SaveString(CHUNK_ID_3GNM, _3gnm, _3gnl, "", "", true, 64);
@@ -6542,7 +6547,7 @@ namespace {
         } else /*if (newFile)*/ {
             _3crc = pRIFF->AddSubChunk(CHUNK_ID_3CRC, pSamples->size() * 8);
             // the order of einf and 3crc is not the same in v2 and v3
-            if (einf && pVersion && pVersion->major == 3) pRIFF->MoveSubChunk(_3crc, einf);
+            if (einf && pVersion && pVersion->major > 2) pRIFF->MoveSubChunk(_3crc, einf);
         }
         { // must be performed in RAM here ...
             uint32_t* pData = (uint32_t*) _3crc->LoadChunkData();

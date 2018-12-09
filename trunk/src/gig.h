@@ -1321,6 +1321,7 @@ namespace gig {
         public:
             static const DLS::version_t VERSION_2;
             static const DLS::version_t VERSION_3;
+            static const DLS::version_t VERSION_4;
 
             // derived attributes from DLS::Resource
             using DLS::Resource::pInfo;
