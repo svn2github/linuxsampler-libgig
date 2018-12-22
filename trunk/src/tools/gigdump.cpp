@@ -528,7 +528,20 @@ void PrintDimensionRegions(gig::Region* rgn) {
             cout << endl;
         }
 #endif
-        cout << "                Pan=" << (int) pDimensionRegion->Pan << endl;
+        cout << "                Pan=" << (int) pDimensionRegion->Pan;
+        cout << ", SustainReleaseTrigger=";
+        switch (pDimensionRegion->SustainReleaseTrigger) {
+            case gig::sust_rel_trg_none:
+                cout << "NONE";
+                break;
+            case gig::sust_rel_trg_maxvelocity:
+                cout << "MAXVELOCITY";
+                break;
+            case gig::sust_rel_trg_keyvelocity:
+                cout << "KEYVELOCITY";
+                break;
+        }
+        cout << endl;
         {
             gig::eg_opt_t& egopt = pDimensionRegion->EG1Options;
             cout << "                EG1AttackCancel=" << egopt.AttackCancel << ", EG1AttackHoldCancel=" << egopt.AttackHoldCancel << ", EG1Decay1Cancel=" << egopt.Decay1Cancel << ", EG1Decay2Cancel=" << egopt.Decay2Cancel << ", EG1ReleaseCancel=" << egopt.ReleaseCancel << endl;

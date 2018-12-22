@@ -1732,12 +1732,11 @@ namespace {
             VCFType                         = vcf_type_lowpass;
             memset(DimensionUpperLimits, 127, 8);
         }
-        // format extension for EG behavior options, these will *NOT* work with
-        // Gigasampler/GigaStudio !
+        // chunk for own format extensions, these will *NOT* work with Gigasampler/GigaStudio !
         RIFF::Chunk* lsde = _3ewl->GetSubChunk(CHUNK_ID_LSDE);
-        if (lsde) {
+        if (lsde) { // format extension for EG behavior options
             eg_opt_t* pEGOpts[2] = { &EG1Options, &EG2Options };
-            for (int i = 0; i < 2; ++i) {
+            for (int i = 0; i < 2; ++i) { // NOTE: we reserved a 3rd byte for a potential future EG3 option
                 unsigned char byte = lsde->ReadUint8();
                 pEGOpts[i]->AttackCancel     = byte & 1;
                 pEGOpts[i]->AttackHoldCancel = byte & (1 << 1);
@@ -1746,6 +1745,11 @@ namespace {
                 pEGOpts[i]->ReleaseCancel    = byte & (1 << 4);
             }
         }
+        // format extension for sustain pedal up effect on release trigger samples
+        if (lsde && lsde->GetSize() > 3) { // NOTE: we reserved the 3rd byte for a potential future EG3 option
+            lsde->SetPos(3);
+            SustainReleaseTrigger = static_cast<sust_rel_trg_t>(lsde->ReadUint8());
+        } else SustainReleaseTrigger = sust_rel_trg_none;
 
         pVelocityAttenuationTable = GetVelocityTable(VelocityResponseCurve,
                                                      VelocityResponseDepth,
@@ -1936,6 +1940,7 @@ namespace {
         SRLZ(SampleAttenuation);
         SRLZ(EG1Options);
         SRLZ(EG2Options);
+        SRLZ(SustainReleaseTrigger);
 
         // derived attributes from DLS::Sampler
         SRLZ(FineTune);
@@ -2243,25 +2248,30 @@ namespace {
             memcpy(&pData[140], DimensionUpperLimits, 8);
         }
 
-        // format extension for EG behavior options, these will *NOT* work with
+        // chunk for own format extensions, these will *NOT* work with
         // Gigasampler/GigaStudio !
         RIFF::Chunk* lsde = pParentList->GetSubChunk(CHUNK_ID_LSDE);
+        const int lsdeSize = 4; // NOTE: we reserved the 3rd byte for a potential future EG3 option
         if (!lsde) {
-            // only add this "LSDE" chunk if the EG options do not match the
-            // default EG behavior
+            // only add this "LSDE" chunk if either EG options or sustain
+            // release trigger option deviate from their default behaviour
             eg_opt_t defaultOpt;
             if (memcmp(&EG1Options, &defaultOpt, sizeof(eg_opt_t)) ||
-                memcmp(&EG2Options, &defaultOpt, sizeof(eg_opt_t)))
+                memcmp(&EG2Options, &defaultOpt, sizeof(eg_opt_t)) ||
+                SustainReleaseTrigger)
             {
-                lsde = pParentList->AddSubChunk(CHUNK_ID_LSDE, 2);
+                lsde = pParentList->AddSubChunk(CHUNK_ID_LSDE, lsdeSize);
                 // move LSDE chunk to the end of parent list
                 pParentList->MoveSubChunk(lsde, (RIFF::Chunk*)NULL);
             }
         }
         if (lsde) {
+            if (lsde->GetNewSize() < lsdeSize)
+                lsde->Resize(lsdeSize);
+            // format extension for EG behavior options
             unsigned char* pData = (unsigned char*) lsde->LoadChunkData();
             eg_opt_t* pEGOpts[2] = { &EG1Options, &EG2Options };
-            for (int i = 0; i < 2; ++i) {
+            for (int i = 0; i < 2; ++i) { // NOTE: we reserved the 3rd byte for a potential future EG3 option
                 pData[i] =
                     (pEGOpts[i]->AttackCancel     ? 1 : 0) |
                     (pEGOpts[i]->AttackHoldCancel ? (1<<1) : 0) |
@@ -2269,6 +2279,8 @@ namespace {
                     (pEGOpts[i]->Decay2Cancel     ? (1<<3) : 0) |
                     (pEGOpts[i]->ReleaseCancel    ? (1<<4) : 0);
             }
+            // format extension for effect of sustain pedal up event on release trigger samples
+            pData[3] = static_cast<uint8_t>(SustainReleaseTrigger);
         }
     }
 

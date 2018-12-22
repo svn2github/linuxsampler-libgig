@@ -414,6 +414,28 @@ namespace gig {
         void serialize(Serialization::Archive* archive);
     };
 
+    /** @brief Defines behaviour of release triggered sample(s) on sustain pedal up event.
+     *
+     * This option defines whether a sustain pedal up event (CC#64) would cause
+     * release triggered samples to be played (if any).
+     *
+     * @b Note: This option is an extension to the original gig file format,
+     * so this option is not available with the original Gigasampler/GigaStudio
+     * software! Currently only LinuxSampler and gigedit support this option!
+     *
+     * By default (which equals the original Gigasampler/GigaStudio behaviour)
+     * no release triggered samples are played if the sustain pedal is released.
+     * So usually in the gig format release triggered samples are only played
+     * on MIDI note-off events.
+     *
+     * @see enumCount(), enumKey(), enumKeys(), enumValue()
+     */
+    GIG_DECLARE_ENUM(sust_rel_trg_t,
+        sust_rel_trg_none        = 0x00, /**< No release triggered sample(s) are played on sustain pedal up (default). */
+        sust_rel_trg_maxvelocity = 0x01, /**< Play release trigger sample(s) on sustain pedal up, and simply use 127 as MIDI velocity for playback. */
+        sust_rel_trg_keyvelocity = 0x02, /**< Play release trigger sample(s) on sustain pedal up, and use the key's last MIDI note-on velocity for playback. */
+    );
+
     // just symbol prototyping
     class File;
     class Instrument;
@@ -554,6 +576,7 @@ namespace gig {
             uint8_t            DimensionUpperLimits[8];       ///< gig3: defines the upper limit of the dimension values for this dimension region. In case you wondered why this is defined on DimensionRegion level and not on Region level: the zone sizes (upper limits) of the velocity dimension can indeed differ in the individual dimension regions, depending on which zones of the other dimension types are currently selected. So this is exceptional for the velocity dimension only. All other dimension types have the same dimension zone sizes for every single DimensionRegion (of the sample Region).
             eg_opt_t           EG1Options;                    ///< [gig extension]: Behavior options which should be used for envelope generator 1 (volume amplitude EG).
             eg_opt_t           EG2Options;                    ///< [gig extension]: Behavior options which should be used for envelope generator 2 (filter cutoff EG).
+            sust_rel_trg_t     SustainReleaseTrigger;         ///< [gig extension]: Whether a sustain pedal up event shall play release trigger sample.
 
             // derived attributes from DLS::Sampler
             using DLS::Sampler::UnityNote;
