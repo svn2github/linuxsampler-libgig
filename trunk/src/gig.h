@@ -433,7 +433,7 @@ namespace gig {
     GIG_DECLARE_ENUM(sust_rel_trg_t,
         sust_rel_trg_none        = 0x00, /**< No release triggered sample(s) are played on sustain pedal up (default). */
         sust_rel_trg_maxvelocity = 0x01, /**< Play release trigger sample(s) on sustain pedal up, and simply use 127 as MIDI velocity for playback. */
-        sust_rel_trg_keyvelocity = 0x02, /**< Play release trigger sample(s) on sustain pedal up, and use the key's last MIDI note-on velocity for playback. */
+        sust_rel_trg_keyvelocity = 0x02  /**< Play release trigger sample(s) on sustain pedal up, and use the key's last MIDI note-on velocity for playback. */
     );
 
     // just symbol prototyping
