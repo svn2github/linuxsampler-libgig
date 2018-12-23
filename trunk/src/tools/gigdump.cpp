@@ -541,6 +541,7 @@ void PrintDimensionRegions(gig::Region* rgn) {
                 cout << "KEYVELOCITY";
                 break;
         }
+        cout << ", NoNoteOffReleaseTrigger=" << int(pDimensionRegion->NoNoteOffReleaseTrigger);
         cout << endl;
         {
             gig::eg_opt_t& egopt = pDimensionRegion->EG1Options;

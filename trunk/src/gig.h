@@ -577,6 +577,7 @@ namespace gig {
             eg_opt_t           EG1Options;                    ///< [gig extension]: Behavior options which should be used for envelope generator 1 (volume amplitude EG).
             eg_opt_t           EG2Options;                    ///< [gig extension]: Behavior options which should be used for envelope generator 2 (filter cutoff EG).
             sust_rel_trg_t     SustainReleaseTrigger;         ///< [gig extension]: Whether a sustain pedal up event shall play release trigger sample.
+            bool               NoNoteOffReleaseTrigger;       ///< [gig extension]: If @c true then don't play a release trigger sample on MIDI note-off events.
 
             // derived attributes from DLS::Sampler
             using DLS::Sampler::UnityNote;

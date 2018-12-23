@@ -1748,8 +1748,13 @@ namespace {
         // format extension for sustain pedal up effect on release trigger samples
         if (lsde && lsde->GetSize() > 3) { // NOTE: we reserved the 3rd byte for a potential future EG3 option
             lsde->SetPos(3);
-            SustainReleaseTrigger = static_cast<sust_rel_trg_t>(lsde->ReadUint8());
-        } else SustainReleaseTrigger = sust_rel_trg_none;
+            uint8_t byte = lsde->ReadUint8();
+            SustainReleaseTrigger   = static_cast<sust_rel_trg_t>(byte & 0x03);
+            NoNoteOffReleaseTrigger = byte >> 7;
+        } else {
+            SustainReleaseTrigger   = sust_rel_trg_none;
+            NoNoteOffReleaseTrigger = false;
+        }
 
         pVelocityAttenuationTable = GetVelocityTable(VelocityResponseCurve,
                                                      VelocityResponseDepth,
@@ -1941,6 +1946,7 @@ namespace {
         SRLZ(EG1Options);
         SRLZ(EG2Options);
         SRLZ(SustainReleaseTrigger);
+        SRLZ(NoNoteOffReleaseTrigger);
 
         // derived attributes from DLS::Sampler
         SRLZ(FineTune);
@@ -2253,12 +2259,12 @@ namespace {
         RIFF::Chunk* lsde = pParentList->GetSubChunk(CHUNK_ID_LSDE);
         const int lsdeSize = 4; // NOTE: we reserved the 3rd byte for a potential future EG3 option
         if (!lsde) {
-            // only add this "LSDE" chunk if either EG options or sustain
-            // release trigger option deviate from their default behaviour
+            // only add this "LSDE" chunk if either EG options or release
+            // trigger options deviate from their default behaviour
             eg_opt_t defaultOpt;
             if (memcmp(&EG1Options, &defaultOpt, sizeof(eg_opt_t)) ||
                 memcmp(&EG2Options, &defaultOpt, sizeof(eg_opt_t)) ||
-                SustainReleaseTrigger)
+                SustainReleaseTrigger || NoNoteOffReleaseTrigger)
             {
                 lsde = pParentList->AddSubChunk(CHUNK_ID_LSDE, lsdeSize);
                 // move LSDE chunk to the end of parent list
@@ -2279,8 +2285,8 @@ namespace {
                     (pEGOpts[i]->Decay2Cancel     ? (1<<3) : 0) |
                     (pEGOpts[i]->ReleaseCancel    ? (1<<4) : 0);
             }
-            // format extension for effect of sustain pedal up event on release trigger samples
-            pData[3] = static_cast<uint8_t>(SustainReleaseTrigger);
+            // format extension for release trigger options
+            pData[3] = static_cast<uint8_t>(SustainReleaseTrigger) | (NoNoteOffReleaseTrigger ? (1<<7) : 0);
         }
     }
 
