@@ -15,6 +15,10 @@ Version SVN trunk (?)
       DimensionRegion::SustainReleaseTrigger which allows to define whether
       a sustain pedal up event shall cause a release trigger sample to be
       played (default: don't play release trigger sample by sustain pedal).
+    - GIG FORMAT EXTENSION: Added attribute
+      DimensionRegion::NoNoteOffReleaseTrigger which allows to disable the
+      regular behaviour of playing release trigger sample on MIDI note-off
+      events.
 
   * src/Serialization.cpp, src/Serialization.h:
     - Hide pure internal declarations from header file to avoid numerous
